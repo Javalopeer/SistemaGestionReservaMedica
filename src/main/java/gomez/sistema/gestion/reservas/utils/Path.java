@@ -1,4 +1,4 @@
-package gomez.sistema.gestion.reservas.utilities;
+package gomez.sistema.gestion.reservas.utils;
 
 public class Path {
 

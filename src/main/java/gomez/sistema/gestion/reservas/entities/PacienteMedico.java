@@ -1,5 +1,8 @@
 package gomez.sistema.gestion.reservas.entities;
 
+import lombok.Data;
+
+@Data
 public class PacienteMedico {
 
     private Medico medico;
@@ -13,19 +16,4 @@ public class PacienteMedico {
         this.paciente = paciente;
     }
 
-    public Medico getMedico() {
-        return medico;
-    }
-
-    public void setMedico(Medico medico) {
-        this.medico = medico;
-    }
-
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
-    }
 }

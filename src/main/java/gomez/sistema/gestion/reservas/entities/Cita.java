@@ -1,8 +1,13 @@
 package gomez.sistema.gestion.reservas.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.time.LocalTime;
 import java.util.Date;
 
+@Data
+@AllArgsConstructor
 public class Cita {
 
     private Integer idCita;
@@ -21,38 +26,6 @@ public class Cita {
         this.fecha = fecha;
         this.hora = hora;
         this.medico = medico;
-        this.paciente = paciente;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public LocalTime getHora() {
-        return hora;
-    }
-
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
-    }
-
-    public Medico getMedico() {
-        return medico;
-    }
-
-    public void setMedico(Medico medico) {
-        this.medico = medico;
-    }
-
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
     }
 }

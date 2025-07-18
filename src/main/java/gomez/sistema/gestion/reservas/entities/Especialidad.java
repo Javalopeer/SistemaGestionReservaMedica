@@ -11,7 +11,10 @@ public enum Especialidad {
     Pediatria,
     Oftalmologia,
     Otorrinolaringologia,
-    Pediatriam,
-    Geriatria
+    Geriatria;
 
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }

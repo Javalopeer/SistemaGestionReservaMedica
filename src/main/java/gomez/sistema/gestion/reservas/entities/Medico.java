@@ -1,7 +1,12 @@
 package gomez.sistema.gestion.reservas.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.time.LocalTime;
 
+@Data
+@AllArgsConstructor
 public class Medico {
 
     private Integer id;
@@ -25,14 +30,6 @@ public class Medico {
         this.telefono = telefono;
     }
 
-    public Especialidad getEspecialidad() {
-        return especialidad;
-    }
-
-    public void setEspecialidad(Especialidad especialidad) {
-        this.especialidad = especialidad;
-    }
-
     public LocalTime getHorarioFin() {
         return LocalTime.of(horarioFin.getHour(), horarioFin.getMinute());
     }
@@ -43,38 +40,6 @@ public class Medico {
     public void setHorario(LocalTime horarioInicio, LocalTime horarioFin) {
         this.horarioInicio = LocalTime.of(horarioInicio.getHour(), horarioFin.getMinute());
         this.horarioFin = LocalTime.of(horarioFin.getHour(), horarioFin.getMinute());
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public int getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(int telefono) {
-        this.telefono = telefono;
-    }
-
-    public static int getUltimoId() {
-        return ultimoId;
-    }
-
-    public static void setUltimoId(int ultimoId) {
-        Medico.ultimoId = ultimoId;
     }
 
     @Override

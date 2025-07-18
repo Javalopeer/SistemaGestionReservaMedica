@@ -1,5 +1,10 @@
 package gomez.sistema.gestion.reservas.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class Paciente {
 
     private Float cedula;
@@ -16,35 +21,4 @@ public class Paciente {
         this.telefono = telefono;
     }
 
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public Float getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(Float cedula) {
-        this.cedula = cedula;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
 }

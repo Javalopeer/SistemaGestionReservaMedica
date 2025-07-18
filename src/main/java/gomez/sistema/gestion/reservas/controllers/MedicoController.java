@@ -6,6 +6,7 @@ import gomez.sistema.gestion.reservas.repository.MedicoRepositorio;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
 import java.time.LocalTime;
@@ -84,11 +85,5 @@ public class MedicoController implements MedicoRepositorio {
         medicos.removeIf(p ->p.getId().equals(id));
     }
 
-    @FXML
-    private Label lblMensaje;
 
-    @FXML
-    void onClick(ActionEvent event) {
-        lblMensaje.setText("Hola como estas?");
-    }
 }

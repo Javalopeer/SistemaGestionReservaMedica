@@ -1,7 +1,12 @@
 package gomez.sistema.gestion.reservas.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import java.sql.Date;
 
+@Data
+@AllArgsConstructor
 public class Factura {
 
     private Integer idFactura;
@@ -21,36 +26,5 @@ public class Factura {
         this.monto = monto;
     }
 
-    public Cita getCita() {
-        return cita;
-    }
-
-    public void setCita(Cita cita) {
-        this.cita = cita;
-    }
-
-    public Date getFechaEmision() {
-        return fechaEmision;
-    }
-
-    public void setFechaEmision(Date fechaEmision) {
-        this.fechaEmision = fechaEmision;
-    }
-
-    public Integer getIdFactura() {
-        return idFactura;
-    }
-
-    public void setIdFactura(Integer idFactura) {
-        this.idFactura = idFactura;
-    }
-
-    public double getMonto() {
-        return monto;
-    }
-
-    public void setMonto(double monto) {
-        this.monto = monto;
-    }
 
 }
