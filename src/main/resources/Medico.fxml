@@ -1,28 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="341.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.MedicoView">
+<AnchorPane prefHeight="591.0" prefWidth="776.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.MedicoView">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#769abc" height="25.0" layoutX="158.0" layoutY="14.0" stroke="BLACK" strokeType="INSIDE" width="63.0" />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#769abc" height="249.0" layoutX="7.0" layoutY="72.0" stroke="BLACK" strokeType="INSIDE" width="364.0" />
-      <Button layoutX="223.0" layoutY="285.0" mnemonicParsing="false" onAction="#agregarMedico" prefHeight="17.0" prefWidth="63.0" text="Agregar" />
-      <Label fx:id="lblEntidad" layoutX="166.0" layoutY="14.0" prefHeight="25.0" prefWidth="49.0" text="Medicos" />
-      <Label fx:id="lblNombre" layoutX="14.0" layoutY="108.0" prefHeight="17.0" prefWidth="63.0" text="Nombre" />
-      <Label fx:id="lblEspecialidad" layoutX="14.0" layoutY="142.0" prefHeight="17.0" prefWidth="76.0" text="Especialidad" />
-      <Label fx:id="lblHorario" layoutX="14.0" layoutY="176.0" prefHeight="17.0" prefWidth="84.0" text="Horario Entrada" />
-      <Label fx:id="lblTelefono" layoutX="14.0" layoutY="250.0" prefHeight="17.0" prefWidth="63.0" text="Telefono" />
-      <TextField fx:id="txtNombre" layoutX="160.0" layoutY="104.0" prefHeight="25.0" prefWidth="188.0" promptText="Escriba el nombre aqui" />
-      <TextField fx:id="txtHorarioEntrada" accessibleRole="DATE_PICKER" layoutX="160.0" layoutY="172.0" prefHeight="25.0" prefWidth="188.0" promptText="Horario Entrada" />
-      <TextField fx:id="txtTelefono" layoutX="160.0" layoutY="246.0" prefHeight="25.0" prefWidth="188.0" promptText="Ingrese el telefono" />
-      <ComboBox fx:id="comboEspecialidad" editable="true" layoutX="160.0" layoutY="138.0" prefHeight="25.0" prefWidth="188.0" promptText="Seleccione la especialidad" visibleRowCount="5" />
-      <Label fx:id="lblAccion" layoutX="134.0" layoutY="39.0" prefHeight="25.0" prefWidth="110.0" text="Agregar un medico" />
-      <Label fx:id="lblHorario1" layoutX="14.0" layoutY="212.0" prefHeight="17.0" prefWidth="84.0" text="Horario Salida" />
-      <TextField fx:id="txtHorarioSalida" accessibleRole="DATE_PICKER" layoutX="160.0" layoutY="208.0" prefHeight="25.0" prefWidth="188.0" promptText="Horario Salida" />
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#4f88b9" height="624.0" layoutX="-10.0" layoutY="-12.0" stroke="BLACK" strokeType="INSIDE" width="286.0" />
+      <Label fx:id="lblAccion" layoutX="23.0" layoutY="27.0" prefHeight="68.0" prefWidth="219.0" text="Sistema de Gestion de Reservas Medicas" textAlignment="CENTER" textFill="WHITE" textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font name="Wingdings" size="23.0" />
+         </font></Label>
+      <VBox layoutY="144.0" prefHeight="355.0" prefWidth="274.0">
+         <children>
+            <ToggleButton fx:id="btnInicio" mnemonicParsing="false" prefHeight="63.0" prefWidth="276.0" style="-fx-background-color: #4f88b9;" text="Inicio" textAlignment="CENTER">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" prefHeight="66.0" prefWidth="278.0" style="-fx-background-color: #4f88b9;" text="Medicos">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" prefHeight="59.0" prefWidth="278.0" style="-fx-background-color: #4f88b9;" text="Pacientes">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ToggleButton>
+            <ToggleButton mnemonicParsing="false" prefHeight="62.0" prefWidth="278.0" style="-fx-background-color: #4f88b9;" text="Citas">
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ToggleButton>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
