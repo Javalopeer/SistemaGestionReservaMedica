@@ -4,5 +4,5 @@ public class Path {
 
 
 
-    public static final String MEDICO_CONTROLLER = "/Medico.fxml";
+    public static final String MEDICO_CONTROLLER = "/Inicio.fxml";
 }

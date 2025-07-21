@@ -2,69 +2,30 @@ package gomez.sistema.gestion.reservas.views;
 
 import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
-import gomez.sistema.gestion.reservas.entities.Medico;
-import gomez.sistema.gestion.reservas.sql.Database;
+import gomez.sistema.gestion.reservas.dao.Database;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.util.StringConverter;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.BorderPane;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalTime;
 
 public class MedicoView {
 
     private final MedicoController controller = new MedicoController();
 
     @FXML
-    private ComboBox<Especialidad> comboEspecialidad;
+    private BorderPane borderPane;
+
+    @FXML
+    private ToggleButton btnInicio;
 
     @FXML
     private Label lblAccion;
-
-    @FXML
-    private Label lblEntidad;
-
-    @FXML
-    private Label lblEspecialidad;
-
-    @FXML
-    private Label lblHorario;
-
-    @FXML
-    private Label lblHorario1;
-
-    @FXML
-    private Label lblNombre;
-
-    @FXML
-    private Label lblTelefono;
-
-    @FXML
-    private TextField txtHorarioEntrada;
-
-    @FXML
-    private TextField txtHorarioSalida;
-
-    @FXML
-    private TextField txtNombre;
-
-    @FXML
-    private TextField txtTelefono;
-
-    @FXML
-    void agregarMedico(ActionEvent event) {
-//        Medico medico = new Medico();
-//        medico.setNombre(txtNombre.getText());
-//        medico.setEspecialidad((Especialidad) comboEspecialidad.getValue());
-//        medico.setHorarioInicio(LocalTime.parse(txtHorarioEntrada.getText()));
-//        medico.setHorarioFin(LocalTime.parse(txtHorarioSalida.getText()));
-//        medico.setTelefono(Integer.parseInt(txtTelefono.getText()));
-//        controller.agregar(medico);
-    }
 
      @FXML
     void initialize(){
