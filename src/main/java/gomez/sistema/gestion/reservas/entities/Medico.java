@@ -30,6 +30,15 @@ public class Medico {
         this.telefono = telefono;
     }
 
+    public Medico(String nombre, Especialidad especialidad, LocalTime horarioInicio,LocalTime horarioFin) {
+        this();
+        this.especialidad = especialidad;
+        this.horarioInicio = horarioInicio;
+        this.horarioFin = horarioFin;
+        this.nombre = nombre;
+    }
+
+
     public LocalTime getHorarioFin() {
         return LocalTime.of(horarioFin.getHour(), horarioFin.getMinute());
     }

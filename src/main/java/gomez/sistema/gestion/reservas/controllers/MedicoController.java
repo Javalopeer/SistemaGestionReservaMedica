@@ -3,12 +3,6 @@ package gomez.sistema.gestion.reservas.controllers;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.repository.MedicoRepositorio;
-
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class MedicoController implements MedicoRepositorio {
 
-    private List<Medico> medicos;
+    private final List<Medico> medicos;
 
     public MedicoController() {
         medicos = new ArrayList<Medico>();

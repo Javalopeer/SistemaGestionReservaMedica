@@ -2,7 +2,7 @@ package gomez.sistema.gestion.reservas.views;
 
 import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
-import gomez.sistema.gestion.reservas.dao.Database;
+import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;

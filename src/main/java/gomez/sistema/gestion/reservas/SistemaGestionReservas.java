@@ -4,6 +4,7 @@ import gomez.sistema.gestion.reservas.entities.Especialidad;
 
 import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.entities.Medico;
+import gomez.sistema.gestion.reservas.sql.Database;
 
 import java.time.LocalTime;
 
@@ -21,7 +22,10 @@ public class SistemaGestionReservas {
         medicoController.buscarHorario(LocalTime.of(10, 00), LocalTime.of(12, 00)).forEach(System.out::println);
 
 
+        medicoController.listar("Alberto", Especialidad.Cardiologia);
+
     }
 
     public final static MedicoController medicoController = new MedicoController();
+    public final static Database database = new Database();
 }
