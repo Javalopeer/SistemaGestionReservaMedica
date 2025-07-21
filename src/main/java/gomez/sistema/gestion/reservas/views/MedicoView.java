@@ -3,6 +3,7 @@ package gomez.sistema.gestion.reservas.views;
 import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
+import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
@@ -10,6 +11,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalTime;
 
 public class MedicoView {
@@ -65,6 +68,13 @@ public class MedicoView {
 
      @FXML
     void initialize(){
+         try(Connection con = Database.getConnection()) {
+             if (con != null) {
+                 System.out.println("Conectado exitosamente a la base de datos de Reservas Medicas. ✅");
+             }
+         }catch (SQLException e) {
+             System.out.println("✖️ Error al conectar: " + e.getMessage());
+         }
 //         comboEspecialidad.getItems().addAll(Especialidad.values());
 //
 //         comboEspecialidad.setConverter(new StringConverter<Especialidad>() {
