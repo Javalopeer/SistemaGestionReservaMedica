@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.PacienteView">
+
+    <TableView fx:id="tablaPacientes" layoutX="22.0" layoutY="246.0" prefHeight="106.0" prefWidth="560.0" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="246.0">
+        <columns>
+            <TableColumn fx:id="colCedula" prefWidth="134.0" text="Cedula" />
+            <TableColumn fx:id="colNombre" prefWidth="142.0" text="Nombre" />
+            <TableColumn fx:id="colApellido" minWidth="0.0" prefWidth="121.0" text="Apellido" />
+            <TableColumn fx:id="colTelefono" prefWidth="161.0" text="Telefono" />
+        </columns>
+    </TableView>
+    <Button fx:id="aggPaciente" layoutX="363.0" layoutY="184.0" mnemonicParsing="false" onAction="#agregarPaciente" prefHeight="25.0" prefWidth="114.0" text="Agregar" />
+    <Text layoutX="133.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cedula" />
+    <Text layoutX="133.0" layoutY="127.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Apellido" />
+    <Text layoutX="133.0" layoutY="165.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Telefono" /> 
+    <TextField fx:id="txtCedula" layoutX="253.0" layoutY="35.0" prefHeight="25.0" prefWidth="218.0" promptText="Escriba la cedula" />
+    <TextField fx:id="txtNombre" layoutX="252.0" layoutY="71.0" prefHeight="25.0" prefWidth="218.0" promptText="Ingrese el nombre" />
+    <TextField fx:id="txtApellido" layoutX="253.0" layoutY="107.0" prefHeight="25.0" prefWidth="218.0" promptText="Ingrese el apellido" />
+    <TextField fx:id="txtTelefono" layoutX="253.0" layoutY="145.0" prefHeight="25.0" prefWidth="218.0" promptText="Digite el telefono" />
+    <Label fx:id="lblAccion" alignment="CENTER" layoutX="9.0" layoutY="176.0" prefHeight="32.0" prefWidth="326.0" />
+    <Button fx:id="delPaciente" layoutX="468.0" layoutY="361.0" mnemonicParsing="false" onAction="#eliminarPaciente" prefHeight="25.0" prefWidth="114.0" text="Eliminar" />
+    <Label fx:id="lblAccionDel" alignment="CENTER" layoutX="35.0" layoutY="358.0" prefHeight="32.0" prefWidth="326.0" />
+   <Text layoutX="133.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" />
+
+</AnchorPane>

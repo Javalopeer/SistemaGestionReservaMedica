@@ -22,22 +22,22 @@
             </Text>
             <VBox cache="true" layoutX="-1.0" layoutY="191.0" prefHeight="364.0" prefWidth="200.0" spacing="60.0">
                <children>
-                  <Button accessibleRole="CHECK_BOX" mnemonicParsing="false" onAction="#mostrarInicio" prefHeight="30.0" prefWidth="200.0" text="Inicio" textFill="WHITE">
+                  <Button accessibleRole="CHECK_BOX" mnemonicParsing="false" onAction="#mostrarInicio" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: white;" text="Inicio" textAlignment="CENTER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button accessibleRole="CHECK_MENU_ITEM" mnemonicParsing="false" onAction="#mostrarMedico" prefHeight="30.0" prefWidth="200.0" text="Medico" textAlignment="CENTER">
+                  <Button accessibleRole="CHECK_MENU_ITEM" mnemonicParsing="false" onAction="#mostrarMedico" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: white;" text="Medico" textAlignment="CENTER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#mostrarPaciente" prefHeight="30.0" prefWidth="200.0" text="Paciente">
+                  <Button mnemonicParsing="false" onAction="#mostrarPaciente" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: white;" text="Paciente">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#mostrarFacturas" prefHeight="30.0" prefWidth="200.0" text="Facturas">
+                  <Button mnemonicParsing="false" onAction="#mostrarFacturas" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-border-color: transparent; -fx-text-fill: white;" text="Facturas">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

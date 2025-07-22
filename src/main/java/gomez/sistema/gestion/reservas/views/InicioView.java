@@ -57,7 +57,14 @@ public class InicioView {
 
     @FXML
     void mostrarPaciente(ActionEvent event) {
-
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/Paciente.fxml"));
+            System.out.println(getClass().getResource("/Paciente.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+            mainPane.setCenter(root);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
