@@ -1,47 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.Blend?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.InicioView">
+<BorderPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="649.0" prefWidth="820.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.InicioView">
    <left>
       <AnchorPane BorderPane.alignment="CENTER">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="600.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="649.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
             <Text fill="#fffbde" layoutX="24.0" layoutY="62.0" lineSpacing="2.0" smooth="false" stroke="WHITE" strokeType="INSIDE" strokeWidth="0.0" text="Sistema de Gestion de Reservas Medicas" textAlignment="CENTER" wrappingWidth="150.16534423828125">
                <font>
-                  <Font size="15.0" />
+                  <Font size="20.0" />
                </font>
             </Text>
-            <VBox cache="true" layoutY="155.0" prefHeight="291.0" prefWidth="200.0" spacing="60.0">
+            <VBox cache="true" layoutX="-1.0" layoutY="191.0" prefHeight="364.0" prefWidth="200.0" spacing="60.0">
                <children>
-                  <Button accessibleRole="CHECK_BOX" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Inicio" textFill="WHITE">
+                  <Button accessibleRole="CHECK_BOX" mnemonicParsing="false" onAction="#mostrarInicio" prefHeight="30.0" prefWidth="200.0" text="Inicio" textFill="WHITE">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button accessibleRole="CHECK_MENU_ITEM" mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Medico" textAlignment="CENTER">
+                  <Button accessibleRole="CHECK_MENU_ITEM" mnemonicParsing="false" onAction="#mostrarMedico" prefHeight="30.0" prefWidth="200.0" text="Medico" textAlignment="CENTER">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Paciente">
+                  <Button mnemonicParsing="false" onAction="#mostrarPaciente" prefHeight="30.0" prefWidth="200.0" text="Paciente">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="30.0" prefWidth="200.0" text="Facturas">
+                  <Button mnemonicParsing="false" onAction="#mostrarFacturas" prefHeight="30.0" prefWidth="200.0" text="Facturas">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -57,53 +53,4 @@
          </children>
       </AnchorPane>
    </left>
-   <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
-         <children>
-            <Label alignment="TOP_CENTER" contentDisplay="CENTER" text="Bienvenido al Sistema de Gestión de Reservas Médicas" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="24.0" />
-               </font>
-            </Label>
-            <HBox alignment="CENTER" prefHeight="182.0" prefWidth="460.0" spacing="20.0">
-               <children>
-                  <VBox prefHeight="119.0" prefWidth="100.0">
-                     <children>
-                        <Label fx:id="cantidadMedicos" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="BASELINE_CENTER" prefHeight="75.0" prefWidth="100.0" text="Total de médicos registrados" textAlignment="CENTER" wrapText="true" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label fx:id="cantidadPacientes" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="BASELINE_CENTER" prefHeight="70.0" prefWidth="100.0" text="Total de pacientes registrados" textAlignment="CENTER" wrapText="true" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="200.0" prefWidth="100.0">
-                     <children>
-                        <Label fx:id="cantidadCitas" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="BASELINE_CENTER" prefHeight="70.0" prefWidth="100.0" text="Total de citas registradas" textAlignment="CENTER" wrapText="true" />
-                     </children>
-                  </VBox>
-               </children>
-            </HBox>
-            <PieChart fx:id="pieChartCitas" />
-         </children>
-      </VBox>
-   </center>
 </BorderPane>

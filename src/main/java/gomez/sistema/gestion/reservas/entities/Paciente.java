@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Paciente {
 
-    private Float cedula;
+    private Integer cedula;
     private String nombre;
     private String apellido;
     private String telefono;

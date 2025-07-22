@@ -35,7 +35,7 @@ public class PacienteController implements PacienteRepositorio {
 
     @Override
     public void actualizar(Paciente paciente) {
-        Paciente p = buscar(paciente.getCedula());
+        Paciente p = buscar(Float.valueOf(paciente.getCedula()));
         if (p != null) {
             p.setNombre(paciente.getNombre());
             p.setApellido(paciente.getApellido());
