@@ -42,28 +42,21 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
         }
     }
 
-    @Override
-    public Medico buscar(Medico medico) {
-        Medico med = new Medico();
-        try{
-            String sql = "SELECT * FROM gerardo_medico WHERE nombre LIKE ?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, "%" + medico.getNombre() + "%");
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                med = new Medico(
-                        rs.getString("nombre"),
-                        Especialidad.valueOf(rs.getString("especialidad")),
-                        LocalTime.parse(rs.getString("horarioEntrada")),
-                        LocalTime.parse(rs.getString("horarioSalida"))
-                );
+    public List<String> buscar() {
+        List<String> nombres = new ArrayList<>();
+        String sql = "SELECT nombre, apellido FROM gerardo_medico";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
+                nombres.add(nombreCompleto);
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return med;
+        return nombres;
     }
+
 
     public void eliminar(Medico medico) {
         String sql = "DELETE FROM gerardo_medico WHERE id = ?";

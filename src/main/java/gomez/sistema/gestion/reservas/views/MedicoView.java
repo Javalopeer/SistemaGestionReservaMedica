@@ -6,19 +6,15 @@ import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.ActionEvent;
+import org.controlsfx.control.textfield.TextFields;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class MedicoView {
 
@@ -26,10 +22,25 @@ public class MedicoView {
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
 
     @FXML
-    private BorderPane borderPane;
+    private TextField txtTelefonoUpd;
 
     @FXML
-    private ToggleButton btnInicio;
+    private Button updMedico;
+
+    @FXML
+    private TextField txtNombreUpd;
+
+    @FXML
+    private TextField txtHorarioEntrUpd;
+
+    @FXML
+    private TextField txtHorarioSalUpd;
+
+    @FXML
+    private ComboBox<Especialidad> comboEspUpd;
+
+    @FXML
+    private TextField txtNombreMedicoUpd;
 
     @FXML
     private Label lblAccion;
@@ -47,7 +58,7 @@ public class MedicoView {
     private TableColumn<Medico, String> colHorario;
 
     @FXML
-    private TableColumn<Medico, String> colNombre;
+    private TableColumn<Medico, String> colNombreCompleto;
 
     @FXML
     private TableColumn<Medico, String> colTelefono;
@@ -65,7 +76,7 @@ public class MedicoView {
     private TextField txtHorarioSali;
 
     @FXML
-    private TextField txtNombre;
+    private TextField txtNombreCompleto;
 
     @FXML
     private TextField txtTelefono;
@@ -84,7 +95,7 @@ public class MedicoView {
             System.out.println("✖️ Error al conectar: " + e.getMessage());
         }
 
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colNombreCompleto.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre() + " " + cellData.getValue().getApellido()));
         colEspecialidad.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getEspecialidad().name()));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
@@ -98,12 +109,22 @@ public class MedicoView {
 
         comboEsp.getItems().addAll(Especialidad.values());
 
+        comboEspUpd.getItems().addAll(Especialidad.values());
+
+        List<String> nombresMedicos = medDao.buscar();
+        TextFields.bindAutoCompletion(txtNombreMedicoUpd, nombresMedicos).getOnAutoCompleted();
+
+
 
     }
 
     @FXML
     private void agregarMedico() {
-        String nombre = txtNombre.getText().trim();
+        String nombreCompleto = txtNombreCompleto.getText().trim();
+        String[] partes = nombreCompleto.split(" ", 2);
+        String nombre = partes[0];
+        String apellido = partes.length > 1 ? partes[1] : "";
+
         Especialidad especialidad = comboEsp.getValue();
         String horarioInicioStr = txtHorarioEnt.getText().trim();
         String horarioFinStr = txtHorarioSali.getText().trim();
@@ -123,6 +144,7 @@ public class MedicoView {
 
             Medico medico = new Medico();
             medico.setNombre(nombre);
+            medico.setApellido(apellido);
             medico.setEspecialidad(especialidad);
             medico.setHorarioInicio(horarioInicio);
             medico.setHorarioFin(horarioFin);
@@ -132,7 +154,7 @@ public class MedicoView {
             tablaMedicos.getItems().add(medico);
 
             // Limpiar campos
-            txtNombre.clear();
+            txtNombreCompleto.clear();
             comboEsp.setValue(null);
             txtHorarioEnt.clear();
             txtHorarioSali.clear();
@@ -156,5 +178,10 @@ public class MedicoView {
         } else {
             lblAccionDel.setText("❗❗Seleccione un médico para eliminar❗❗");
         }
+    }
+
+    @FXML
+    private void actualizarMedico() {
+
     }
 }

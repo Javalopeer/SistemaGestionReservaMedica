@@ -7,13 +7,14 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="563.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.MedicoView">
+<AnchorPane prefHeight="595.0" prefWidth="604.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.MedicoView">
 
     <TableView fx:id="tablaMedicos" layoutX="22.0" layoutY="246.0" prefHeight="106.0" prefWidth="560.0" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="246.0">
         <columns>
-            <TableColumn fx:id="colNombre" prefWidth="134.0" text="Nombre" />
+            <TableColumn fx:id="colNombreCompleto" prefWidth="134.0" text="Nombre completo" />
             <TableColumn fx:id="colEspecialidad" prefWidth="142.0" text="Especialidad" />
             <TableColumn fx:id="colTelefono" minWidth="0.0" prefWidth="121.0" text="Teléfono" />
          <TableColumn fx:id="colHorario" prefWidth="161.0" text="Horario" />
@@ -25,13 +26,28 @@
    <Text layoutX="133.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Especialidad" />
    <Text layoutX="135.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario de Entrada" />
    <Text layoutX="134.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Telefono" wrappingWidth="49.853515625" />
-   <TextField fx:id="txtNombre" layoutX="253.0" layoutY="35.0" prefHeight="25.0" prefWidth="218.0" promptText="Escriba el nombre" />
+   <TextField fx:id="txtNombreCompleto" layoutX="253.0" layoutY="35.0" prefHeight="25.0" prefWidth="218.0" promptText="Escriba el nombre completo" />
    <TextField fx:id="txtTelefono" layoutX="253.0" layoutY="102.0" prefHeight="25.0" prefWidth="218.0" promptText="Digite el telefono" />
    <TextField fx:id="txtHorarioEnt" layoutX="253.0" layoutY="137.0" prefHeight="25.0" prefWidth="218.0" promptText="Horario entrada" />
    <TextField fx:id="txtHorarioSali" layoutX="253.0" layoutY="170.0" prefHeight="25.0" prefWidth="218.0" promptText="Horario salida" />
    <ComboBox fx:id="comboEsp" layoutX="253.0" layoutY="68.0" prefHeight="25.0" prefWidth="218.0" promptText="Escoja la especialidad" />
    <Label fx:id="lblAccion" alignment="CENTER" layoutX="14.0" layoutY="205.0" prefHeight="32.0" prefWidth="326.0" />
    <Button fx:id="delMedico" layoutX="468.0" layoutY="361.0" mnemonicParsing="false" onAction="#eliminarMedico" prefHeight="25.0" prefWidth="114.0" text="Eliminar" />
-   <Label fx:id="lblAccionDel" alignment="CENTER" layoutX="35.0" layoutY="358.0" prefHeight="32.0" prefWidth="326.0" />
+   <Label fx:id="lblAccionDel" alignment="CENTER" layoutX="35.0" layoutY="358.0" prefHeight="25.0" prefWidth="326.0" />
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="137.0" layoutX="21.0" layoutY="386.0" stroke="BLACK" strokeType="INSIDE" width="332.0" />
+   <Text layoutX="35.0" layoutY="417.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Buscar medico:" />
+   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="171.0" layoutX="21.0" layoutY="432.0" stroke="BLACK" strokeType="INSIDE" width="332.0" />
+   <Text layoutX="35.0" layoutY="459.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nombre" />
+   <TextField fx:id="txtNombreUpd" layoutX="150.0" layoutY="442.0" prefHeight="25.0" prefWidth="194.0" promptText="Escriba el nombre" />
+   <Text layoutX="35.0" layoutY="490.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Especialidad" />
+   <ComboBox fx:id="comboEspUpd" layoutX="150.0" layoutY="473.0" prefHeight="25.0" prefWidth="194.0" promptText="Escoja la especialidad" />
+   <Text layoutX="35.0" layoutY="522.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Telefono" />
+   <Text layoutX="35.0" layoutY="554.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario de Entrada" />
+   <TextField fx:id="txtTelefonoUpd" layoutX="150.0" layoutY="505.0" prefHeight="25.0" prefWidth="194.0" promptText="Digite el telefono" />
+   <TextField fx:id="txtHorarioEntrUpd" layoutX="150.0" layoutY="537.0" prefHeight="25.0" prefWidth="194.0" promptText="Horario entrada" />
+   <Text layoutX="35.0" layoutY="585.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario de Salida" />
+   <TextField fx:id="txtHorarioSalUpd" layoutX="150.0" layoutY="568.0" prefHeight="25.0" prefWidth="194.0" promptText="Horario salida" />
+   <Button fx:id="updMedico" layoutX="243.0" layoutY="612.0" mnemonicParsing="false" onAction="#actualizarMedico" prefHeight="25.0" prefWidth="111.0" text="Actualizar" />
+   <TextField fx:id="txtNombreMedicoUpd" layoutX="150.0" layoutY="400.0" prefHeight="25.0" prefWidth="194.0" promptText="Escriba el nombre" />
 
 </AnchorPane>

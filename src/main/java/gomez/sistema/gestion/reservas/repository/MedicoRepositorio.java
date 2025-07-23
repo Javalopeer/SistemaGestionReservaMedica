@@ -7,6 +7,6 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface MedicoRepositorio extends RepositorioGeneral<Medico, Integer> {
-    List<Medico> listar(String nombre, Especialidad especialidad);
+    List<Medico> listar(String nombre, String apellido, Especialidad especialidad);
     List<Medico> buscarHorario(LocalTime horarioInicio, LocalTime horarioFin);
 }

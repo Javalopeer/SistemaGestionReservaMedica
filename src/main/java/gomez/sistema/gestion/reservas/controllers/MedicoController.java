@@ -18,9 +18,9 @@ public class MedicoController implements MedicoRepositorio {
     }
 
     @Override
-    public List<Medico> listar(String nombre, Especialidad especialidad) {
+    public List<Medico> listar(String nombre, String apellido, Especialidad especialidad) {
         return medicos.stream()
-                .filter(p->p.getNombre().equalsIgnoreCase(nombre) && p.getEspecialidad().equals(especialidad))
+                .filter(p->p.getNombre().equalsIgnoreCase(nombre) && p.getApellido().equalsIgnoreCase(apellido) && p.getEspecialidad().equals(especialidad))
                 .collect(Collectors.toList());
     }
 
@@ -63,6 +63,7 @@ public class MedicoController implements MedicoRepositorio {
         Medico act = buscar(medico.getId());
         if (act != null) {
             act.setNombre(medico.getNombre());
+            act.setApellido(medico.getApellido());
             if(!act.getEspecialidad().equals(medico.getEspecialidad())) {
                 act.setEspecialidad(medico.getEspecialidad());
             }

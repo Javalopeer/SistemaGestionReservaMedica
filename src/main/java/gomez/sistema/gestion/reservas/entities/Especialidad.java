@@ -15,10 +15,16 @@ public enum Especialidad {
     Infectologia,
     Gastroenterologia,
     Fisioterapia,
+    Neurologia,
+    Medicina_General,
+    Psicologia,
+    Traumatologia,
+    Urologia,
+    Psiquiatria,
     Nutricion;
 
     @Override
     public String toString() {
-        return this.name();
+        return this.name().replace("_", " ");
     }
 }
