@@ -13,7 +13,7 @@ public class Medico {
     private String nombre;
     private String apellido;
     private Especialidad especialidad;
-    private int telefono;
+    private String telefono;
     private LocalTime horarioInicio;
     private LocalTime horarioFin;
     private static int ultimoId;
@@ -22,7 +22,7 @@ public class Medico {
         this.id =++ ultimoId;
     }
 
-    public Medico(Especialidad especialidad, LocalTime horarioInicio,LocalTime horarioFin, String nombre, String apellido, int telefono) {
+    public Medico(Especialidad especialidad, LocalTime horarioInicio,LocalTime horarioFin, String nombre, String apellido, String telefono) {
         this();
         this.especialidad = especialidad;
         this.horarioInicio = horarioInicio;
@@ -62,6 +62,14 @@ public class Medico {
 
     public String getNombreCompleto(){
         return nombre + " " + apellido;
+    }
+
+    public String getApellido(){
+        return apellido != null ? apellido : "";
+    }
+
+    public String getTelefono(){
+        return String.valueOf(telefono);
     }
 
     @Override

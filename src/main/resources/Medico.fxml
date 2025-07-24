@@ -14,7 +14,7 @@
 
     <TableView fx:id="tablaMedicos" layoutX="22.0" layoutY="246.0" prefHeight="106.0" prefWidth="560.0" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="246.0">
         <columns>
-            <TableColumn fx:id="colNombreCompleto" prefWidth="134.0" text="Nombre completo" />
+            <TableColumn fx:id="colNombreCompleto" prefWidth="134.0" text="Doctor" />
             <TableColumn fx:id="colEspecialidad" prefWidth="142.0" text="Especialidad" />
             <TableColumn fx:id="colTelefono" minWidth="0.0" prefWidth="121.0" text="Teléfono" />
          <TableColumn fx:id="colHorario" prefWidth="161.0" text="Horario" />
@@ -49,5 +49,6 @@
    <TextField fx:id="txtHorarioSalUpd" layoutX="150.0" layoutY="568.0" prefHeight="25.0" prefWidth="194.0" promptText="Horario salida" />
    <Button fx:id="updMedico" layoutX="243.0" layoutY="612.0" mnemonicParsing="false" onAction="#actualizarMedico" prefHeight="25.0" prefWidth="111.0" text="Actualizar" />
    <TextField fx:id="txtNombreMedicoUpd" layoutX="150.0" layoutY="400.0" prefHeight="25.0" prefWidth="194.0" promptText="Escriba el nombre" />
+   <Label fx:id="lblAccionUpd" alignment="CENTER" layoutX="18.0" layoutY="611.0" prefHeight="25.0" prefWidth="218.0" />
 
 </AnchorPane>

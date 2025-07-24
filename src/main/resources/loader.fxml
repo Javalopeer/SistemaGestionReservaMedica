@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           fx:controller="gomez.sistema.gestion.reservas.views.LoaderController"
+           style="-fx-background-color: rgba(255,255,255,0.8);"
+           alignment="CENTER">
+
+    <VBox alignment="CENTER" spacing="10">
+        <ProgressBar fx:id="progressBar" prefWidth="300" />
+        <Label fx:id="progressLabel" text="Cargando..." />
+    </VBox>
+</StackPane>

@@ -4,8 +4,11 @@ import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
+import gomez.sistema.gestion.reservas.error.AlertFactory;
 import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.Pos;
+import javafx.util.Callback;
 import org.controlsfx.control.textfield.TextFields;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -15,11 +18,16 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class MedicoView {
 
     private final MedicoController controller = new MedicoController();
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
+    private Medico medicoOriginal;
+    private boolean cargandoDatos = false;
 
     @FXML
     private TextField txtTelefonoUpd;
@@ -85,6 +93,9 @@ public class MedicoView {
     private Button delMedico;
 
     @FXML
+    private Label lblAccionUpd;
+
+    @FXML
     void initialize() {
 
         try (Connection con = Database.getConnection()) {
@@ -95,17 +106,93 @@ public class MedicoView {
             System.out.println("✖️ Error al conectar: " + e.getMessage());
         }
 
-        colNombreCompleto.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNombre() + " " + cellData.getValue().getApellido()));
+        colNombreCompleto.setCellValueFactory(cellData -> {
+            String nombre = cellData.getValue().getNombre();
+            String apellido = cellData.getValue().getApellido();
+            String nombreCompleto = (nombre != null ? nombre : "") +
+                    (apellido != null && !apellido.trim().isEmpty() ? " " + apellido : "");
+            return new SimpleStringProperty(nombreCompleto.trim());
+        });
         colEspecialidad.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getEspecialidad().name()));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colHorario.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getHorarioInicio() + " - " + cellData.getValue().getHorarioFin()));
+
+        txtNombreUpd.textProperty().addListener((obs, oldVal, newVal) -> validarCambios());
+        txtTelefonoUpd.textProperty().addListener((obs, oldVal, newVal) -> validarCambios());
+        txtHorarioEntrUpd.textProperty().addListener((obs, oldVal, newVal) -> validarCambios());
+        txtHorarioSalUpd.textProperty().addListener((obs, oldVal, newVal) -> validarCambios());
+        comboEspUpd.valueProperty().addListener((obs, oldVal, newVal) -> validarCambios());
+
+        setCamposEdicionEnabled(false);
+
+
+        // Centrar Nombre Completo
+        colNombreCompleto.setCellFactory(column -> new TableCell<Medico, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+// Centrar Especialidad
+        colEspecialidad.setCellFactory(column -> new TableCell<Medico, String>() {
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+// Centrar Teléfono
+        colTelefono.setCellFactory(new Callback<TableColumn<Medico, String>, TableCell<Medico, String>>() {
+            @Override
+            public TableCell<Medico, String> call(TableColumn<Medico, String> param) {
+                return new TableCell<Medico, String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item);
+                            setAlignment(Pos.CENTER); // Centra el contenido
+                        }
+                    }
+                };
+            }
+        });
+
+// Centrar Horario
+        colHorario.setCellFactory(column -> new TableCell<Medico, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
 
         tablaMedicos.getItems().addAll(medDao.obtenerTodos());
         tablaMedicos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             delMedico.setDisable(newValue == null);
         });
         delMedico.setDisable(true);
+
 
         comboEsp.getItems().addAll(Especialidad.values());
 
@@ -114,8 +201,68 @@ public class MedicoView {
         List<String> nombresMedicos = medDao.buscar();
         TextFields.bindAutoCompletion(txtNombreMedicoUpd, nombresMedicos).getOnAutoCompleted();
 
+        Map<String, Medico> mapaMedicos = medDao.obtenerTodos().stream()
+                .collect(Collectors.toMap(m -> m.getNombre() + " " + m.getApellido(), m -> m));
 
+        txtNombreMedicoUpd.setOnAction(event -> {
+            String textoSeleccionado = txtNombreMedicoUpd.getText();
+            Medico medicoSeleccionado = mapaMedicos.get(textoSeleccionado);
 
+            if (medicoSeleccionado != null) {
+                cargandoDatos = true;
+                medicoOriginal = medicoSeleccionado;
+
+                txtNombreUpd.setText(medicoSeleccionado.getNombre() + " " + medicoSeleccionado.getApellido());
+                comboEspUpd.setValue(medicoSeleccionado.getEspecialidad());
+                txtTelefonoUpd.setText(String.valueOf(medicoSeleccionado.getTelefono()));
+                txtHorarioEntrUpd.setText(String.valueOf(medicoSeleccionado.getHorarioInicio()));
+                txtHorarioSalUpd.setText(String.valueOf(medicoSeleccionado.getHorarioFin()));
+
+                cargandoDatos = false;
+                setCamposEdicionEnabled(true);
+                validarCambios();
+            } else {
+                setCamposEdicionEnabled(false);
+                limpiarCamposEdicion();
+            }
+        });
+    }
+
+    private boolean hayCambiosEnFormulario() {
+        if (medicoOriginal == null) return false;
+
+        String[] partes = txtNombreUpd.getText().trim().split(" ", 2);
+        String nombre = partes[0];
+        String apellido = partes.length > 1 ? partes[1] : "";
+
+        return !nombre.equals(medicoOriginal.getNombre()) ||
+                !apellido.equals(medicoOriginal.getApellido()) ||
+                !String.valueOf(comboEspUpd.getValue()).equals(String.valueOf(medicoOriginal.getEspecialidad())) ||
+                !txtTelefonoUpd.getText().equals(medicoOriginal.getTelefono()) ||
+                !txtHorarioEntrUpd.getText().equals(medicoOriginal.getHorarioInicio().toString()) ||
+                !txtHorarioSalUpd.getText().equals(medicoOriginal.getHorarioFin().toString());
+    }
+
+    private void validarCambios() {
+        if (cargandoDatos) return;
+        updMedico.setDisable(!hayCambiosEnFormulario());
+    }
+
+    private void limpiarCamposEdicion() {
+        txtNombreUpd.clear();
+        comboEspUpd.setValue(null);
+        txtTelefonoUpd.clear();
+        txtHorarioEntrUpd.clear();
+        txtHorarioSalUpd.clear();
+    }
+
+    private void setCamposEdicionEnabled(boolean enabled) {
+        txtNombreUpd.setDisable(!enabled);
+        comboEspUpd.setDisable(!enabled);
+        txtTelefonoUpd.setDisable(!enabled);
+        txtHorarioEntrUpd.setDisable(!enabled);
+        txtHorarioSalUpd.setDisable(!enabled);
+        updMedico.setDisable(!enabled);
     }
 
     @FXML
@@ -133,14 +280,14 @@ public class MedicoView {
         // Validaciones
         if (nombre.isEmpty() || especialidad == null || horarioInicioStr.isEmpty() ||
                 horarioFinStr.isEmpty() || telefonoStr.isEmpty()) {
-            lblAccion.setText("Complete todos los campos.❌️");
+            AlertFactory.mostrarError("Complete todos los campos.");
             return;
         }
 
         try {
             LocalTime horarioInicio = LocalTime.parse(horarioInicioStr, DateTimeFormatter.ofPattern("HH:mm"));
             LocalTime horarioFin = LocalTime.parse(horarioFinStr, DateTimeFormatter.ofPattern("HH:mm"));
-            int telefono = Integer.parseInt(telefonoStr);
+            String telefono = telefonoStr.trim();
 
             Medico medico = new Medico();
             medico.setNombre(nombre);
@@ -153,18 +300,17 @@ public class MedicoView {
             medDao.insertar(medico);
             tablaMedicos.getItems().add(medico);
 
-            // Limpiar campos
             txtNombreCompleto.clear();
             comboEsp.setValue(null);
             txtHorarioEnt.clear();
             txtHorarioSali.clear();
             txtTelefono.clear();
 
-            lblAccion.setText("Médico agregado correctamente.✅");
+            AlertFactory.mostrarInfo("Éxito", "Médico agregado correctamente ✅");
 
         } catch (Exception e) {
-            lblAccion.setText("❌ Error: " + e.getMessage());
             e.printStackTrace();
+            AlertFactory.mostrarError("Error al agregar el médico.");
         }
     }
 
@@ -174,7 +320,7 @@ public class MedicoView {
         if (seleccionado != null) {
                 medDao.eliminar(seleccionado);
                 tablaMedicos.getItems().remove(seleccionado);
-                lblAccionDel.setText("Médico eliminado correctamente.✅");
+                lblAccionDel.setText("Médico eliminado correctamente ✅");
         } else {
             lblAccionDel.setText("❗❗Seleccione un médico para eliminar❗❗");
         }
@@ -182,6 +328,51 @@ public class MedicoView {
 
     @FXML
     private void actualizarMedico() {
+        try{
+            String nombreCompleto = txtNombreUpd.getText().trim();
+            String[] partes = nombreCompleto.split(" ", 2);
+            String nombre = partes[0];
+            String apellido = partes.length > 1 ? partes[1] : "";
 
+            Especialidad especialidad = comboEspUpd.getValue();
+            String telefono = txtTelefonoUpd.getText();
+            String horarioEntrada = txtHorarioEntrUpd.getText();
+            String horarioSalida = txtHorarioSalUpd.getText();
+
+            String textoSeleccionado = txtNombreMedicoUpd.getText();
+            Optional<Medico> medicoOpt = medDao.obtenerTodos().stream()
+                    .filter(m -> (m.getNombre() + " " + m.getApellido()).equalsIgnoreCase(textoSeleccionado))
+                    .findFirst();
+
+            if (medicoOpt.isEmpty()) {
+                lblAccionUpd.setText("Médico no encontrado ❌");
+                return;
+            }
+
+            Medico medico = medicoOpt.get();
+            medico.setNombre(nombre);
+            medico.setApellido(apellido);
+            medico.setEspecialidad(especialidad);
+            medico.setTelefono(telefono);
+            medico.setHorarioInicio(LocalTime.parse(horarioEntrada));
+            medico.setHorarioFin(LocalTime.parse(horarioSalida));
+
+            medDao.actualizar(medico);
+            tablaMedicos.getItems().setAll(medDao.obtenerTodos());
+
+            txtNombreUpd.clear();
+            comboEspUpd.setValue(null);
+            txtTelefonoUpd.clear();
+            txtHorarioEntrUpd.clear();
+            txtHorarioSalUpd.clear();
+            txtNombreMedicoUpd.clear();
+
+            lblAccionUpd.setText("Médico actualizado correctamente ✅");
+            setCamposEdicionEnabled(false);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            lblAccionUpd.setText("Error al actualizar el medico ❌");
+        }
     }
 }
