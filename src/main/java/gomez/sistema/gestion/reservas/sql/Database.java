@@ -23,7 +23,7 @@ public class Database {
         }
     }
 
-    public static void main(String[] args) {
+    public void verificarConexion() {
         Connection con = getConnection();
 
         if (con != null) {
@@ -32,7 +32,7 @@ public class Database {
             try {
                 con.close();
             } catch (Exception e) {
-                System.out.println("Error al conectar: " + e.getMessage() + "❌");
+                System.out.println("✖️ Error al conectar: " + e.getMessage());
             }
         }
     }

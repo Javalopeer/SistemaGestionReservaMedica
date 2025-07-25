@@ -1,18 +1,20 @@
 package gomez.sistema.gestion.reservas.views;
 
-import gomez.sistema.gestion.reservas.controllers.MedicoController;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
+import gomez.sistema.gestion.reservas.pdf.PdfExporter;
 import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
-import javafx.util.Callback;
+import javafx.stage.Stage;
 import org.controlsfx.control.textfield.TextFields;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -24,13 +26,15 @@ import java.util.stream.Collectors;
 
 public class MedicoView {
 
-    private final MedicoController controller = new MedicoController();
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private Medico medicoOriginal;
     private boolean cargandoDatos = false;
 
     @FXML
     private TextField txtTelefonoUpd;
+
+    @FXML
+    private Button btnExportarPDFMed;
 
     @FXML
     private Button updMedico;
@@ -49,15 +53,6 @@ public class MedicoView {
 
     @FXML
     private TextField txtNombreMedicoUpd;
-
-    @FXML
-    private Label lblAccion;
-
-    @FXML
-    private Label lblAccionDel;
-
-    @FXML
-    private Button aggMedico;
 
     @FXML
     private TableColumn<Medico, String> colEspecialidad;
@@ -126,66 +121,10 @@ public class MedicoView {
 
         setCamposEdicionEnabled(false);
 
-
-        // Centrar Nombre Completo
-        colNombreCompleto.setCellFactory(column -> new TableCell<Medico, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item);
-                    setAlignment(Pos.CENTER);
-                }
-            }
-        });
-
-// Centrar Especialidad
-        colEspecialidad.setCellFactory(column -> new TableCell<Medico, String>() {
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item);
-                    setAlignment(Pos.CENTER);
-                }
-            }
-        });
-
-// Centrar Teléfono
-        colTelefono.setCellFactory(new Callback<TableColumn<Medico, String>, TableCell<Medico, String>>() {
-            @Override
-            public TableCell<Medico, String> call(TableColumn<Medico, String> param) {
-                return new TableCell<Medico, String>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                        } else {
-                            setText(item);
-                            setAlignment(Pos.CENTER); // Centra el contenido
-                        }
-                    }
-                };
-            }
-        });
-
-// Centrar Horario
-        colHorario.setCellFactory(column -> new TableCell<Medico, String>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item);
-                    setAlignment(Pos.CENTER);
-                }
-            }
-        });
+        colNombreCompleto.setCellFactory(column -> crearCeldaCentrada());
+        colEspecialidad.setCellFactory(column -> crearCeldaCentrada());
+        colHorario.setCellFactory(column -> crearCeldaCentrada());
+        colTelefono.setCellFactory(column -> crearCeldaCentrada());
 
         tablaMedicos.getItems().addAll(medDao.obtenerTodos());
         tablaMedicos.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -226,6 +165,17 @@ public class MedicoView {
                 limpiarCamposEdicion();
             }
         });
+    }
+
+    private TableCell<Medico, String> crearCeldaCentrada() {
+        return new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+                setAlignment(Pos.CENTER);
+            }
+        };
     }
 
     private boolean hayCambiosEnFormulario() {
@@ -277,6 +227,9 @@ public class MedicoView {
         String horarioFinStr = txtHorarioSali.getText().trim();
         String telefonoStr = txtTelefono.getText().trim();
 
+        LocalTime horarioInicio = LocalTime.parse(horarioInicioStr, DateTimeFormatter.ofPattern("HH:mm"));
+        LocalTime horarioFin = LocalTime.parse(horarioFinStr, DateTimeFormatter.ofPattern("HH:mm"));
+
         // Validaciones
         if (nombre.isEmpty() || especialidad == null || horarioInicioStr.isEmpty() ||
                 horarioFinStr.isEmpty() || telefonoStr.isEmpty()) {
@@ -284,9 +237,18 @@ public class MedicoView {
             return;
         }
 
+        if (telefonoStr.length() > 8 || telefonoStr.length() < 4){
+            AlertFactory.mostrarError("El número de teléfono no puede tener más de 8 dígitos y menos de 4.");
+            return;
+        }
+
+        if(horarioInicio.isAfter(horarioFin) && horarioInicioStr.equals(horarioFinStr)){
+            AlertFactory.mostrarError("El horario inicial no puede ser mayor al final.");
+            return;
+        }
+
         try {
-            LocalTime horarioInicio = LocalTime.parse(horarioInicioStr, DateTimeFormatter.ofPattern("HH:mm"));
-            LocalTime horarioFin = LocalTime.parse(horarioFinStr, DateTimeFormatter.ofPattern("HH:mm"));
+
             String telefono = telefonoStr.trim();
 
             Medico medico = new Medico();
@@ -320,9 +282,9 @@ public class MedicoView {
         if (seleccionado != null) {
                 medDao.eliminar(seleccionado);
                 tablaMedicos.getItems().remove(seleccionado);
-                lblAccionDel.setText("Médico eliminado correctamente ✅");
+                AlertFactory.mostrarInfo("Éxito","Médico eliminado correctamente ✅");
         } else {
-            lblAccionDel.setText("❗❗Seleccione un médico para eliminar❗❗");
+            AlertFactory.mostrarError("❗❗Seleccione un médico para eliminar❗❗");
         }
     }
 
@@ -345,7 +307,7 @@ public class MedicoView {
                     .findFirst();
 
             if (medicoOpt.isEmpty()) {
-                lblAccionUpd.setText("Médico no encontrado ❌");
+                AlertFactory.mostrarError("Médico no encontrado ❌");
                 return;
             }
 
@@ -367,12 +329,19 @@ public class MedicoView {
             txtHorarioSalUpd.clear();
             txtNombreMedicoUpd.clear();
 
-            lblAccionUpd.setText("Médico actualizado correctamente ✅");
+            AlertFactory.mostrarInfo("Éxito","Médico actualizado correctamente ✅");
             setCamposEdicionEnabled(false);
 
         }catch (Exception e){
             e.printStackTrace();
-            lblAccionUpd.setText("Error al actualizar el medico ❌");
+            AlertFactory.mostrarError("Error al actualizar el medico ❌");
         }
     }
+
+    @FXML
+    void exportarMedico(ActionEvent event) {
+        PdfExporter.exportarTablaMedicos(medDao.obtenerTodos(), (Stage) btnExportarPDFMed.getScene().getWindow());
+    }
 }
+
+
