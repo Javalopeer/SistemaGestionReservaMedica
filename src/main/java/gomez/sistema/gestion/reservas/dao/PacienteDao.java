@@ -1,11 +1,11 @@
 package gomez.sistema.gestion.reservas.dao;
 
+import gomez.sistema.gestion.reservas.entities.Especialidad;
+import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,46 +15,41 @@ public class PacienteDao extends GenericDaoImpl<Paciente> {
         super(connection);
     }
 
-    @Override
-    public void actualizar(Paciente paciente) {
+    public void actualizar(Paciente paciente, String cedulaOriginal) {
         try {
-            String sql = "UPDATE gerardo_paciente SET nombre = ?, apellido = ?, telefono = ? WHERE cedula = ?";
+            String sql = "UPDATE gerardo_paciente SET cedula = ?, nombre = ?, apellido = ?, telefono = ? WHERE cedula = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, paciente.getNombre());
-            ps.setString(2, paciente.getApellido());
-            ps.setString(3, paciente.getTelefono());
-            ps.setInt(4, paciente.getCedula());
+            ps.setString(1, paciente.getCedula());
+            ps.setString(2, paciente.getNombre());
+            ps.setString(3, paciente.getApellido());
+            ps.setString(4, paciente.getTelefono());
+            ps.setString(5, cedulaOriginal); // Solo usamos la cédula original
             ps.executeUpdate();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public Paciente buscar(Paciente paciente) {
-        Paciente pac = new Paciente();
-        try {
-            String sql = "SELECT * FROM gerardo_paciente WHERE nombre LIKE ? AND apellido LIKE ?";
-            PreparedStatement ps = this.connection.prepareStatement(sql);
-            ps.setString(1, "%" + paciente.getNombre() + "%");
-            ps.setString(2, "%" + paciente.getApellido() + "%");
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                pac.setNombre(rs.getString("nombre"));
-                pac.setApellido(rs.getString("apellido"));
-                pac.setTelefono(rs.getString("telefono"));
+    public List<String> buscar() {
+        List<String> nombres = new ArrayList<>();
+        String sql = "SELECT nombre, apellido FROM gerardo_paciente";
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()){
+            while (rs.next()) {
+                String nombreCompleto = rs.getString("nombre") + " " + rs.getString("apellido");
+                nombres.add(nombreCompleto);
             }
         }catch (Exception e) {
             e.printStackTrace();
         }
-        return pac;
+        return nombres;
     }
 
     public void eliminar(Paciente paciente) {
         try {
             String sql = "DELETE FROM gerardo_paciente WHERE cedula = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1, paciente.getCedula());
+            ps.setString(1, paciente.getCedula());
             ps.executeUpdate();
         }catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +61,7 @@ public class PacienteDao extends GenericDaoImpl<Paciente> {
         try {
             String sql = "INSERT INTO gerardo_paciente(cedula, nombre, apellido, telefono) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setFloat(1, paciente.getCedula());
+            ps.setString(1, paciente.getCedula());
             ps.setString(2, paciente.getNombre());
             ps.setString(3, paciente.getApellido());
             ps.setString(4, paciente.getTelefono());
@@ -96,15 +91,15 @@ public class PacienteDao extends GenericDaoImpl<Paciente> {
         List<Paciente> pacientes = new ArrayList<Paciente>();
         try {
             String sql = "SELECT * FROM gerardo_paciente";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                pacientes.add(new Paciente(
-                        rs.getInt("cedula"),
-                        rs.getString("apellido"),
-                        rs.getString("nombre"),
-                        rs.getString("telefono")
-                ));
+                Paciente paciente = new Paciente();
+                paciente.setCedula(rs.getString("cedula"));
+                paciente.setNombre(rs.getString("nombre"));
+                paciente.setApellido(rs.getString("apellido"));
+                paciente.setTelefono(rs.getString("telefono"));
+                pacientes.add(paciente);
             }
         }catch (Exception e) {
             e.printStackTrace();

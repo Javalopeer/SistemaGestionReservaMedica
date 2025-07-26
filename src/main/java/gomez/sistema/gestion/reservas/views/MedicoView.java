@@ -4,7 +4,7 @@ import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
-import gomez.sistema.gestion.reservas.pdf.PdfExporter;
+import gomez.sistema.gestion.reservas.pdf.PdfExporterMed;
 import gomez.sistema.gestion.reservas.sql.Database;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
@@ -86,9 +86,6 @@ public class MedicoView {
 
     @FXML
     private Button delMedico;
-
-    @FXML
-    private Label lblAccionUpd;
 
     @FXML
     void initialize() {
@@ -179,7 +176,8 @@ public class MedicoView {
     }
 
     private boolean hayCambiosEnFormulario() {
-        if (medicoOriginal == null) return false;
+        if (medicoOriginal == null)
+            return false;
 
         String[] partes = txtNombreUpd.getText().trim().split(" ", 2);
         String nombre = partes[0];
@@ -340,7 +338,7 @@ public class MedicoView {
 
     @FXML
     void exportarMedico(ActionEvent event) {
-        PdfExporter.exportarTablaMedicos(medDao.obtenerTodos(), (Stage) btnExportarPDFMed.getScene().getWindow());
+        PdfExporterMed.exportarTablaMedicos(medDao.obtenerTodos(), (Stage) btnExportarPDFMed.getScene().getWindow());
     }
 }
 

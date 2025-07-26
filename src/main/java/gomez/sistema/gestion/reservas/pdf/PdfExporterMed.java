@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
-public class PdfExporter {
+public class PdfExporterMed {
     public static void exportarTablaMedicos(List<Medico> medicos, Stage stage) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Guardar PDF");
