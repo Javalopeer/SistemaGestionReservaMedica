@@ -31,6 +31,16 @@ public class InicioView {
 
     }
 
+    @FXML
+    void mostrarCitas(ActionEvent event) {
+
+    }
+
+    @FXML
+    void mostrarHistorial(ActionEvent event) {
+
+    }
+
     public void mostrarVistaConLoader(String rutaFXML){
         try {
             FXMLLoader loaderFXML = new FXMLLoader(getClass().getResource("/loader.fxml"));

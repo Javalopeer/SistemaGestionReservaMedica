@@ -1,7 +1,9 @@
 package gomez.sistema.gestion.reservas.views;
 
+import gomez.sistema.gestion.reservas.dao.CitasDao;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.dao.PacienteDao;
+import gomez.sistema.gestion.reservas.entities.Cita;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
 import gomez.sistema.gestion.reservas.sql.Database;
@@ -19,6 +21,7 @@ public class ContenidoView {
 
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
+    private final CitasDao citDao = new CitasDao(Database.getConnection());
 
 
     @FXML
@@ -53,6 +56,11 @@ public class ContenidoView {
             System.out.println(p.getCedula() + " - " + p.getApellido() + ", " + p.getNombre());
         }
 
+        List<Cita> citas = citDao.obtenerTodos();
+        for (Cita c : citas){
+            System.out.println(c.getMedico() + " - " + c.getPaciente() + " - " + c.getHora() + " - " + c.getFecha());
+        }
+
         Map<String, Integer> conteo = new HashMap<>();
         for (Medico m : medicos) {
             String esp = m.getEspecialidad().name();
@@ -61,6 +69,7 @@ public class ContenidoView {
 
         cantidadMedicos.setText("" + medicos.size());
         cantidadPacientes.setText("" + pacientes.size());
+        cantidadCitas.setText("" + citas.size());
         pieChartCitas.getData().clear();
         for (Map.Entry<String, Integer> entrada : conteo.entrySet()) {
             pieChartCitas.getData().add(new PieChart.Data(entrada.getKey(), entrada.getValue()));
