@@ -1,8 +1,6 @@
 package gomez.sistema.gestion.reservas.views;
 
 import gomez.sistema.gestion.reservas.dao.PacienteDao;
-import gomez.sistema.gestion.reservas.entities.Especialidad;
-import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
 import gomez.sistema.gestion.reservas.pdf.PdfExporterPac;
@@ -14,11 +12,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import org.controlsfx.control.textfield.TextFields;
-
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class PacienteView {
@@ -26,9 +21,6 @@ public class PacienteView {
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
     private boolean cargandoDatos = false;
     private Paciente pacienteOriginal;
-
-    @FXML
-    private Button aggPaciente;
 
     @FXML
     private Button btnExportarPDFPac;
@@ -47,12 +39,6 @@ public class PacienteView {
 
     @FXML
     private Button delPaciente;
-
-    @FXML
-    private Label lblAccion;
-
-    @FXML
-    private Label lblAccionDel;
 
     @FXML
     private TableView<Paciente> tablaPacientes;

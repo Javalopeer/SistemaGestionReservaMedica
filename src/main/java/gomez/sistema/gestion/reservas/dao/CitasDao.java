@@ -1,20 +1,29 @@
 package gomez.sistema.gestion.reservas.dao;
 
 import gomez.sistema.gestion.reservas.entities.Cita;
-import gomez.sistema.gestion.reservas.error.AlertFactory;
+import gomez.sistema.gestion.reservas.entities.Medico;
+import gomez.sistema.gestion.reservas.entities.Paciente;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class CitasDao extends GenericDaoImpl<Cita> {
 
-    public CitasDao(Connection connection) {
+    private final PacienteDao pacDao;
+    private final MedicoDao medDao;
+
+    public CitasDao(Connection connection, PacienteDao pacDao, MedicoDao medDao) {
         super(connection);
+        this.pacDao = pacDao;
+        this.medDao = medDao;
     }
+
 
     @Override
     public void insertar(Cita cita) {
@@ -33,7 +42,18 @@ public class CitasDao extends GenericDaoImpl<Cita> {
 
     @Override
     public void actualizar(Cita cita) {
-        super.actualizar(cita);
+        try{
+            String sql = "UPDATE gerardo_citas SET fecha = ?, hora = ?, medico = ?, paciente = ? WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, String.valueOf(cita.getFecha()));
+            ps.setString(2, String.valueOf(cita.getHora()));
+            ps.setString(3, String.valueOf(cita.getMedico()));
+            ps.setString(4, String.valueOf(cita.getPaciente()));
+            ps.setInt(5, cita.getIdCita());
+            ps.executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void eliminar(Cita cita) {
@@ -60,7 +80,7 @@ public class CitasDao extends GenericDaoImpl<Cita> {
             while (rs.next()){
                 String citaBuscada = "Dr. " + rs.getString("nombreMedico") + " - " +
                         rs.getString("nombrePaciente") + " - " +
-                        rs.getString("hora") + " - " + rs.getDate("fecha").toString();                     ;
+                        rs.getString("hora") + " - " + rs.getDate("fecha").toString();
                 citas.add(citaBuscada);
             }
         } catch (Exception e){
@@ -71,6 +91,28 @@ public class CitasDao extends GenericDaoImpl<Cita> {
 
     @Override
     public List<Cita> obtenerTodos() {
-        return super.obtenerTodos();
+        List<Cita> citas = new ArrayList<>();
+        try{
+            String sql = "SELECT * FROM gerardo_citas";
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while(rs.next()){
+                int idCita = rs.getInt("id");
+                Date fecha = rs.getDate("fecha");
+                LocalTime hora = rs.getTime("hora").toLocalTime();
+                int idMedico = rs.getInt("medico");
+                int idPaciente = rs.getInt("paciente");
+
+                Paciente paciente = pacDao.buscarPorId(idPaciente);
+                Medico medico = medDao.buscarPorId(idMedico);
+
+                Cita cita = new Cita(idCita, fecha, hora, paciente, medico);
+                citas.add(cita);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return citas;
     }
 }

@@ -21,7 +21,7 @@ public class ContenidoView {
 
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
-    private final CitasDao citDao = new CitasDao(Database.getConnection());
+    private final CitasDao citDao = new CitasDao(Database.getConnection(), pacDao, medDao);
 
 
     @FXML

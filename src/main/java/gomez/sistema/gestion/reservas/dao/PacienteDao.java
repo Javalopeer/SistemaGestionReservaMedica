@@ -45,6 +45,26 @@ public class PacienteDao extends GenericDaoImpl<Paciente> {
         return nombres;
     }
 
+    public Paciente buscarPorId(int id) {
+        try {
+            String sql = "SELECT * FROM gerardo_paciente WHERE id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String cedula = rs.getString("cedula");
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                String telefono = rs.getString("telefono");
+                return new Paciente(cedula, nombre, apellido, telefono);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void eliminar(Paciente paciente) {
         try {
             String sql = "DELETE FROM gerardo_paciente WHERE cedula = ?";

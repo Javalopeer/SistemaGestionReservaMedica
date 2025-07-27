@@ -1,5 +1,6 @@
 package gomez.sistema.gestion.reservas.views;
 
+import gomez.sistema.gestion.reservas.dao.CitasDao;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.dao.PacienteDao;
 import gomez.sistema.gestion.reservas.sql.Database;
@@ -8,9 +9,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.util.Duration;
 
@@ -22,6 +20,7 @@ public class InicioView {
 
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
+    private final CitasDao citDao = new CitasDao(Database.getConnection(), pacDao, medDao);
 
     @FXML
     private BorderPane mainPane;
@@ -95,6 +94,9 @@ public class InicioView {
     void mostrarMedico(ActionEvent event) {
         mostrarVistaConLoader("/Medico.fxml");
     }
+
+    @FXML
+    void mostrarCita(ActionEvent event) { mostrarVistaConLoader("/Cita.fxml"); }
 
 
     @FXML

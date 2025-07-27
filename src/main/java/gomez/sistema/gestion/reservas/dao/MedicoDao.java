@@ -32,17 +32,23 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
         }
     }
 
-    public void actualizarHorario(Medico medico) {
+    public Medico buscarPorId(int id) {
         try {
-            String sql = "UPDATE gerardo_medico SET horarioEntrada = ?, horarioSalida = ? WHERE id = ?";
+            String sql = "SELECT * FROM gerardo_medico WHERE id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, medico.getHorarioInicio().toString());
-            ps.setString(2, medico.getHorarioFin().toString());
-            ps.setInt(3, medico.getId());
-            ps.executeUpdate();
-        } catch (SQLException e){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String nombre = rs.getString("nombre");
+                // Asumiendo que tienes enum Especialidad, y columna "especialidad"
+                String especialidad = rs.getString("especialidad");
+                return new Medico(id, nombre, Especialidad.valueOf(especialidad));
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public List<String> buscar() {

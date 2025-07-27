@@ -38,6 +38,12 @@ public class Medico {
         this.apellido = apellido;
     }
 
+    public Medico(Integer id, String nombre, Especialidad especialidad){
+        this.id = id;
+        this.nombre = nombre;
+        this.especialidad = especialidad;
+    }
+
     public Medico(String nombre, String apellido, Especialidad especialidad, LocalTime horarioInicio,LocalTime horarioFin) {
         this();
         this.especialidad = especialidad;
