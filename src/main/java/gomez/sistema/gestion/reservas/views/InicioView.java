@@ -30,10 +30,6 @@ public class InicioView {
 
     }
 
-    @FXML
-    void mostrarCitas(ActionEvent event) {
-
-    }
 
     @FXML
     void mostrarHistorial(ActionEvent event) {
@@ -96,7 +92,9 @@ public class InicioView {
     }
 
     @FXML
-    void mostrarCita(ActionEvent event) { mostrarVistaConLoader("/Cita.fxml"); }
+    void mostrarCitas(ActionEvent event) {
+        mostrarVistaConLoader("/Cita.fxml");
+    }
 
 
     @FXML

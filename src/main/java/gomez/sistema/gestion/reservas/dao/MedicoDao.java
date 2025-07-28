@@ -117,4 +117,23 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
         }
         return medicos;
     }
+
+    public List<Medico> obtenerNombreApellido() {
+        List<Medico> medicosNombre = new ArrayList<>();
+        try {
+            String sql = "SELECT id, nombre, apellido FROM gerardo_medico";
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                Medico medico = new Medico();
+                medico.setId(rs.getInt("id"));
+                medico.setNombre(rs.getString("nombre"));
+                medico.setApellido(rs.getString("apellido"));
+                medicosNombre.add(medico);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return medicosNombre;
+    }
 }
