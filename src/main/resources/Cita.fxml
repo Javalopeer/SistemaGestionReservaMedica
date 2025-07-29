@@ -1,21 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.CitasView">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gomez.sistema.gestion.reservas.views.CitasView">
    <children>
-      <ComboBox fx:id="boxPaciente" layoutX="105.0" layoutY="28.0" prefHeight="26.0" prefWidth="166.0" promptText="Seleccione el médico" />
-      <ComboBox fx:id="boxMedico" layoutX="105.0" layoutY="63.0" prefHeight="26.0" prefWidth="166.0" promptText="Seleccione el paciente" />
-      <Text layoutX="46.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Paciente" />
-      <Text layoutX="46.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Médico" />
-      <DatePicker fx:id="pickerDiaCita" layoutX="388.0" layoutY="29.0" prefHeight="26.0" prefWidth="166.0" />
-      <Text layoutX="318.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dia" />
-      <Text layoutX="318.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario" />
-      <ComboBox fx:id="verificarHorarioXDoctor" layoutX="388.0" layoutY="63.0" prefHeight="26.0" prefWidth="166.0" promptText="Disponibilidad" />
-      <Button fx:id="idBotonCita" layoutX="275.0" layoutY="108.0" mnemonicParsing="false" onAction="#asignarCita" prefHeight="16.0" prefWidth="85.0" text="Asignar Citas" />
+      <ComboBox fx:id="boxPaciente" layoutX="113.0" layoutY="61.0" prefHeight="26.0" prefWidth="173.0" promptText="Seleccione el paciente" />
+      <ComboBox fx:id="boxMedico" layoutX="113.0" layoutY="129.0" prefHeight="26.0" prefWidth="173.0" promptText="Seleccione el médico" />
+      <Text layoutX="20.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Paciente" />
+      <Text layoutX="20.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Médico" />
+      <DatePicker fx:id="pickerDiaCita" layoutX="113.0" layoutY="232.0" prefHeight="26.0" prefWidth="173.0" />
+      <Text layoutX="20.0" layoutY="250.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dia" />
+      <Button fx:id="idBotonCita" layoutX="71.0" layoutY="272.0" mnemonicParsing="false" onAction="#asignarCita" prefHeight="16.0" prefWidth="85.0" text="Asignar Cita" />
+      <Text layoutX="20.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Especialidad" />
+      <ComboBox fx:id="boxEspecialidad" layoutX="113.0" layoutY="96.0" prefHeight="26.0" prefWidth="173.0" promptText="Seleccione la especialidad" />
+      <Label fx:id="labelHorario" layoutX="118.0" layoutY="165.0" prefHeight="17.0" prefWidth="129.0" text="-" />
+      <Text layoutX="20.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario médico" />
+      <ComboBox fx:id="boxHoraCita" layoutX="113.0" layoutY="195.0" prefHeight="25.0" prefWidth="129.0" />
+      <Text layoutX="18.0" layoutY="212.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Disponibilidad" />
+      <TableView fx:id="tablaCitas" layoutX="14.0" layoutY="310.0" prefHeight="105.0" prefWidth="447.0">
+        <columns>
+            <TableColumn fx:id="colId" prefWidth="41.0" text="ID" />
+          <TableColumn fx:id="colMedico" prefWidth="130.0" text="Médico" />
+          <TableColumn fx:id="colPaciente" prefWidth="114.0" text="Paciente" />
+            <TableColumn fx:id="colHora" minWidth="0.0" prefWidth="73.0" text="Hora" />
+            <TableColumn fx:id="colFecha" prefWidth="101.0" text="Fecha" />
+        </columns>
+      </TableView>
+      <Button layoutX="487.0" layoutY="350.0" mnemonicParsing="false" onAction="#eliminarCita" prefHeight="25.0" prefWidth="97.0" text="Eliminar Cita" />
+      <Line endX="-21.0" endY="162.0" layoutX="319.0" layoutY="137.0" startX="-21.0" startY="-89.0" />
+      <TextField fx:id="txtIdCita" layoutX="346.0" layoutY="61.0" prefHeight="25.0" prefWidth="53.0" />
+      <Text layoutX="321.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID :" />
+      <Line endX="173.0" layoutX="411.0" layoutY="96.0" startX="-112.5" />
+      <Text layoutX="410.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="→">
+         <font>
+            <Font name="System Bold" size="17.0" />
+         </font>
+      </Text>
+      <TextField fx:id="txtPaciente" layoutX="427.0" layoutY="61.0" prefHeight="25.0" prefWidth="158.0" promptText="Paciente" />
+      <Text layoutX="313.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Especialidad" />
+      <ComboBox fx:id="boxEspecialidadActu" layoutX="401.0" layoutY="104.0" prefHeight="26.0" prefWidth="182.0" promptText="Seleccione la especialidad" />
+      <Text layoutX="313.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Médico" />
+      <ComboBox fx:id="boxMedicoActu" layoutX="401.0" layoutY="136.0" prefHeight="26.0" prefWidth="182.0" promptText="Seleccione el médico" />
+      <Text layoutX="313.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Horario médico" />
+      <Label fx:id="labelHorarioActu" layoutX="401.0" layoutY="169.0" prefHeight="17.0" prefWidth="129.0" text="-" />
+      <Text layoutX="313.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Disponibilidad" />
+      <ComboBox fx:id="boxHoraActu" layoutX="401.0" layoutY="194.0" prefHeight="25.0" prefWidth="129.0" />
+      <Text layoutX="313.0" layoutY="242.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dia" />
+      <DatePicker fx:id="pickerDiaActu" layoutX="401.0" layoutY="225.0" prefHeight="26.0" prefWidth="173.0" />
+      <Button fx:id="idBotonActualizarCita" layoutX="385.0" layoutY="272.0" mnemonicParsing="false" onAction="#actualizarCita" prefHeight="25.0" prefWidth="97.0" text="Actualizar Cita" />
+      <Line endX="291.0" layoutX="293.0" layoutY="47.0" startX="-276.0" />
+      <Text layoutX="118.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Asignar Cita">
+         <font>
+            <Font name="System Bold Italic" size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="397.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Actualizar Cita">
+         <font>
+            <Font name="System Bold Italic" size="15.0" />
+         </font>
+      </Text>
+      <BarChart fx:id="graficoCitas" layoutX="14.0" layoutY="427.0" prefHeight="165.0" prefWidth="447.0" titleSide="BOTTOM">
+        <xAxis>
+          <CategoryAxis label="Especialidad" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis label="Cantidad de Citas" prefHeight="104.0" prefWidth="49.0" side="LEFT" />
+        </yAxis>
+         <cursor>
+            <Cursor fx:constant="DISAPPEAR" />
+         </cursor>
+      </BarChart>
+      <Button fx:id="btnExportarPDF" layoutX="478.0" layoutY="510.0" mnemonicParsing="false" onAction="#exportarPDF" prefHeight="25.0" prefWidth="116.0" text="Exportar PDF Citas" />
    </children>
 </AnchorPane>

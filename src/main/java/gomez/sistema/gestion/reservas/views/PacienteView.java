@@ -182,7 +182,7 @@ public class PacienteView {
         }
 
         if (!cedula.matches("\\d{9}")) {
-            AlertFactory.mostrarError("La cédula debe contener exactamente 8 dígitos numéricos.");
+            AlertFactory.mostrarError("La cédula debe contener exactamente 9 dígitos numéricos.");
             return;
         }
 

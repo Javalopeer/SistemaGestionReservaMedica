@@ -1,11 +1,8 @@
 package gomez.sistema.gestion.reservas.dao;
 
-import gomez.sistema.gestion.reservas.entities.Especialidad;
-import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
 
 import java.sql.*;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +44,7 @@ public class PacienteDao extends GenericDaoImpl<Paciente> {
 
     public Paciente buscarPorId(int id) {
         try {
-            String sql = "SELECT * FROM gerardo_paciente WHERE id = ?";
+            String sql = "SELECT * FROM gerardo_paciente WHERE cedula = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();

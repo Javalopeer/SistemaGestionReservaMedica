@@ -47,19 +47,24 @@ public class ContenidoView {
         }
 
         List<Medico> medicos = medDao.obtenerTodos();
-        for (Medico m : medicos){
-            System.out.println(m.getNombre() + " - " + m.getEspecialidad());
-        }
+//        for (Medico m : medicos){
+//            System.out.println(m.getNombre() + " - " + m.getEspecialidad());
+//        }
 
         List<Paciente> pacientes = pacDao.obtenerTodos();
-        for (Paciente p : pacientes){
-            System.out.println(p.getCedula() + " - " + p.getApellido() + ", " + p.getNombre());
-        }
+//        for (Paciente p : pacientes){
+//            System.out.println(p.getCedula() + " - " + p.getApellido() + ", " + p.getNombre());
+//        }
 
         List<Cita> citas = citDao.obtenerTodos();
-        for (Cita c : citas){
-            System.out.println(c.getMedico() + " - " + c.getPaciente() + " - " + c.getHora() + " - " + c.getFecha());
-        }
+//        for (Cita c : citas){
+//            System.out.println(
+//                    c.getMedico().getNombre() + " " +
+//                            c.getMedico().getApellido() + " con " +
+//                            c.getPaciente().getNombre() + " " +
+//                            c.getPaciente().getApellido() + " a las " +
+//                            c.getHora() + " el " + c.getFecha()
+//            );
 
         Map<String, Integer> conteo = new HashMap<>();
         for (Medico m : medicos) {

@@ -38,9 +38,10 @@ public class Medico {
         this.apellido = apellido;
     }
 
-    public Medico(Integer id, String nombre, Especialidad especialidad){
+    public Medico(Integer id, String nombre, String apellido, Especialidad especialidad){
         this.id = id;
         this.nombre = nombre;
+        this.apellido = apellido;
         this.especialidad = especialidad;
     }
 
@@ -54,11 +55,12 @@ public class Medico {
     }
 
 
-    public LocalTime getHorarioFin() {
-        return LocalTime.of(horarioFin.getHour(), horarioFin.getMinute());
-    }
     public LocalTime getHorarioInicio() {
-        return LocalTime.of(horarioInicio.getHour(), horarioInicio.getMinute());
+        return horarioInicio != null ? LocalTime.of(horarioInicio.getHour(), horarioInicio.getMinute()) : null;
+    }
+
+    public LocalTime getHorarioFin() {
+        return horarioFin != null ? LocalTime.of(horarioFin.getHour(), horarioFin.getMinute()) : null;
     }
 
     public void setHorario(LocalTime horarioInicio, LocalTime horarioFin) {
@@ -84,6 +86,19 @@ public class Medico {
                 "\nEspecialidad: " + especialidad +
                 "\nTelefono: " + telefono +
                 "\nHorario: " + horarioInicio + '-' + horarioFin;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Medico medico = (Medico) o;
+        return id != null && id.equals(medico.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
 }

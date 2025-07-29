@@ -18,14 +18,15 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
     @Override
     public void actualizar(Medico medico) {
         try {
-            String sql = "UPDATE gerardo_medico SET nombre = ?, especialidad = ?, telefono = ?, horarioEntrada = ?, horarioSalida =? WHERE id = ?";
+            String sql = "UPDATE gerardo_medico SET nombre = ?, apellido = ?, especialidad = ?, telefono = ?, horarioEntrada = ?, horarioSalida =? WHERE id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setString(1, medico.getNombre());
-            ps.setString(2, medico.getEspecialidad().name());
-            ps.setString(3, medico.getTelefono());
-            ps.setString(4, medico.getHorarioInicio().toString());
-            ps.setString(5, medico.getHorarioFin().toString());
-            ps.setInt(6, medico.getId());
+            ps.setString(2, medico.getApellido());
+            ps.setString(3, medico.getEspecialidad().name());
+            ps.setString(4, medico.getTelefono());
+            ps.setString(5, medico.getHorarioInicio().toString());
+            ps.setString(6, medico.getHorarioFin().toString());
+            ps.setInt(7, medico.getId());
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -41,9 +42,9 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
 
             if (rs.next()) {
                 String nombre = rs.getString("nombre");
-                // Asumiendo que tienes enum Especialidad, y columna "especialidad"
+                String apellido = rs.getString("apellido");
                 String especialidad = rs.getString("especialidad");
-                return new Medico(id, nombre, Especialidad.valueOf(especialidad));
+                return new Medico(id, nombre, apellido, Especialidad.valueOf(especialidad));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,22 +119,27 @@ public class MedicoDao extends GenericDaoImpl<Medico> {
         return medicos;
     }
 
-    public List<Medico> obtenerNombreApellido() {
-        List<Medico> medicosNombre = new ArrayList<>();
+    public List<Medico> obtenerPorEspecialidad(Especialidad especialidad) {
+        List<Medico> lista = new ArrayList<>();
         try {
-            String sql = "SELECT id, nombre, apellido FROM gerardo_medico";
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            String sql = "SELECT * FROM gerardo_medico WHERE especialidad = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, especialidad.name());
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Medico medico = new Medico();
-                medico.setId(rs.getInt("id"));
-                medico.setNombre(rs.getString("nombre"));
-                medico.setApellido(rs.getString("apellido"));
-                medicosNombre.add(medico);
+                Medico m = new Medico();
+                m.setId(rs.getInt("id"));
+                m.setNombre(rs.getString("nombre"));
+                m.setApellido(rs.getString("apellido"));
+                m.setEspecialidad(Especialidad.valueOf(rs.getString("especialidad")));
+                m.setHorarioInicio(rs.getTime("horarioEntrada").toLocalTime());
+                m.setHorarioFin(rs.getTime("horarioSalida").toLocalTime());
+                m.setTelefono(rs.getString("telefono"));
+                lista.add(m);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return medicosNombre;
+        return lista;
     }
 }

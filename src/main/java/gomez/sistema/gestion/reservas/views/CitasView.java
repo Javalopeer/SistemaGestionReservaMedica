@@ -4,21 +4,41 @@ import gomez.sistema.gestion.reservas.dao.CitasDao;
 import gomez.sistema.gestion.reservas.dao.Database;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.dao.PacienteDao;
+import gomez.sistema.gestion.reservas.entities.Cita;
+import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
+import gomez.sistema.gestion.reservas.error.AlertFactory;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
+import javafx.geometry.Pos;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.util.StringConverter;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CitasView {
 
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
     private final CitasDao citasDao = new CitasDao(Database.getConnection(), pacDao, medDao);
+    private ObservableList<Cita> citas = FXCollections.observableArrayList();
+    private Cita citaOriginal;
 
+    @FXML
+    private ComboBox<Especialidad> boxEspecialidad;
 
     @FXML
     private ComboBox<Medico> boxMedico;
@@ -33,31 +53,456 @@ public class CitasView {
     private DatePicker pickerDiaCita;
 
     @FXML
-    private ComboBox<Medico> verificarHorarioXDoctor;
+    private Label labelHorario;
+
+    @FXML
+    private ComboBox<LocalTime> boxHoraCita;
+
+    @FXML
+    private TableView<Cita> tablaCitas;
+
+    @FXML
+    private TableColumn<Cita, String> colFecha;
+
+    @FXML
+    private TableColumn<Cita, String> colHora;
+
+    @FXML
+    private TableColumn<Cita, String> colMedico;
+
+    @FXML
+    private TableColumn<Cita, String> colPaciente;
+
+    @FXML
+    private ComboBox<Especialidad> boxEspecialidadActu;
+
+    @FXML
+    private ComboBox<LocalTime> boxHoraActu;
+
+    @FXML
+    private ComboBox<Medico> boxMedicoActu;
+
+    @FXML
+    private TableColumn<Cita, String> colId;
+
+    @FXML
+    private Button idBotonActualizarCita;
+
+    @FXML
+    private Label labelHorarioActu;
+
+    @FXML
+    private DatePicker pickerDiaActu;
+
+    @FXML
+    private TextField txtIdCita;
+
+    @FXML
+    private TextField txtPaciente;
+
+    @FXML
+    private BarChart<String, Number> graficoCitas;
+
+    @FXML
+    private Button btnExportarPDF;
 
     @FXML
     void initialize() {
 
-        boxMedico.setConverter(new StringConverter<Medico>() {
-            @Override
-            public String toString(Medico medico) {
-                return medico != null ? medico.getNombre() + " " + medico.getApellido(): "";
+        // 1. Inhabilitar componentes según flujo
+        boxMedico.setDisable(true);
+        boxHoraCita.setDisable(true);
+        pickerDiaCita.setDisable(true);
+        idBotonCita.setDisable(true);
+
+        // 2. Cargar pacientes
+        boxPaciente.setConverter(new StringConverter<>() {
+            public String toString(Paciente paciente) {
+                return paciente != null ? paciente.getNombre() + " " + paciente.getApellido() : "";
             }
 
-            @Override
-            public Medico fromString(String string) {
-                return null;
+            public Paciente fromString(String s) { return null; }
+        });
+        boxPaciente.getItems().addAll(pacDao.obtenerTodos());
+
+        // 3. Cargar especialidades
+        boxEspecialidad.setConverter(new StringConverter<>() {
+            public String toString(Especialidad especialidad) {
+                return especialidad != null ? especialidad.name() : "";
+            }
+
+            public Especialidad fromString(String s) {
+                return Especialidad.valueOf(s);
+            }
+        });
+        boxEspecialidad.getItems().addAll(Especialidad.values());
+
+        // 4. Configurar combo de médicos
+        boxMedico.setConverter(new StringConverter<>() {
+            public String toString(Medico medico) {
+                return medico != null ? medico.getNombre() + " " + medico.getApellido() : "";
+            }
+
+            public Medico fromString(String s) { return null; }
+        });
+
+        boxMedicoActu.setConverter(new StringConverter<>() {
+            public String toString(Medico medico) {
+                return medico != null ? medico.getNombre() + " " + medico.getApellido() : "";
+            }
+
+            public Medico fromString(String s) { return null; }
+        });
+
+        // 5. Listener: Especialidad → médicos
+        boxEspecialidad.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            boxMedico.getItems().clear();
+            boxMedico.setDisable(true);
+            boxHoraCita.getItems().clear();
+            boxHoraCita.setDisable(true);
+            pickerDiaCita.setDisable(true);
+            idBotonCita.setDisable(true);
+            labelHorario.setText(" - ");
+
+            if (newVal != null) {
+                List<Medico> medicos = medDao.obtenerPorEspecialidad(newVal);
+                boxMedico.getItems().addAll(medicos);
+                boxMedico.setDisable(false);
             }
         });
 
-        boxMedico.getItems().addAll(medDao.obtenerNombreApellido());
+        // 6. Listener: Médico → horarios
+        boxMedico.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            boxHoraCita.getItems().clear();
+            pickerDiaCita.setDisable(true);
+            idBotonCita.setDisable(true);
 
+            if (newVal != null) {
+                labelHorario.setText(newVal.getHorarioInicio() + " - " + newVal.getHorarioFin());
+
+                List<LocalTime> horas = generarHorasDisponibles(newVal.getHorarioInicio(), newVal.getHorarioFin());
+                boxHoraCita.getItems().addAll(horas);
+                boxHoraCita.setDisable(false);
+            } else {
+                labelHorario.setText(" - ");
+            }
+        });
+
+        // 7. Listener: Hora → habilita día
+        boxHoraCita.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            pickerDiaCita.setDisable(newVal == null);
+            idBotonCita.setDisable(true);
+        });
+
+        // 8. Listener: Día → habilita botón
+        pickerDiaCita.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean todosLlenos = newVal != null &&
+                    boxPaciente.getValue() != null &&
+                    boxEspecialidad.getValue() != null &&
+                    boxMedico.getValue() != null &&
+                    boxHoraCita.getValue() != null;
+
+            idBotonCita.setDisable(!todosLlenos);
+        });
+
+        boxEspecialidadActu.valueProperty().addListener((obs, oldVal, newVal) -> {
+            limpiarCamposActualizar();
+
+            if (newVal != null) {
+                List<Medico> medicos = medDao.obtenerPorEspecialidad(newVal);
+                boxMedicoActu.setItems(FXCollections.observableArrayList(medicos));
+                boxMedicoActu.setDisable(false);
+            }
+        });
+
+        boxMedicoActu.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boxHoraActu.getItems().clear();
+            pickerDiaActu.setValue(null);
+            boxHoraActu.setDisable(true);
+            pickerDiaActu.setDisable(true);
+            idBotonActualizarCita.setDisable(true);
+
+            if (newVal != null) {
+                labelHorarioActu.setText(newVal.getHorarioInicio() + " - " + newVal.getHorarioFin());
+
+                List<LocalTime> horas = generarHorasDisponibles(newVal.getHorarioInicio(), newVal.getHorarioFin());
+                boxHoraActu.setItems(FXCollections.observableArrayList(horas));
+                boxHoraActu.setDisable(false);
+            } else {
+                labelHorarioActu.setText(" - ");
+            }
+        });
+
+        boxHoraActu.valueProperty().addListener((obs, oldVal, newVal) -> {
+            pickerDiaActu.setDisable(newVal == null);
+            idBotonActualizarCita.setDisable(true);
+        });
+
+        pickerDiaActu.valueProperty().addListener((obs, oldVal, newVal) -> {
+            boolean todosLlenos = newVal != null &&
+                    boxEspecialidadActu.getValue() != null &&
+                    boxMedicoActu.getValue() != null &&
+                    boxHoraActu.getValue() != null;
+
+            idBotonActualizarCita.setDisable(!todosLlenos);
+        });
+
+        colId.setCellValueFactory(c -> new SimpleStringProperty(String.valueOf(c.getValue().getIdCita())));
+        colMedico.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getMedico().getNombre() + " " + c.getValue().getMedico().getApellido()));
+        colPaciente.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getPaciente().getNombre() + " " + c.getValue().getPaciente().getApellido()));
+        colHora.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getHora().toString()));
+        colFecha.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getFecha().toString()));
+
+        citas.setAll(citasDao.obtenerTodos());
+        tablaCitas.setItems(citas);
+
+        colId.setCellFactory(setColumn -> crearCeldaCentrada());
+        colFecha.setCellFactory(setColumn -> crearCeldaCentrada());
+        colHora.setCellFactory(setColumn -> crearCeldaCentrada());
+        colMedico.setCellFactory(setColumn -> crearCeldaCentrada());
+        colPaciente.setCellFactory(column -> crearCeldaCentrada());
+
+        txtIdCita.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                buscarCitaPorId();
+            }
+        });
+
+
+    }
+
+    private void limpiarCamposActualizar() {
+        boxMedicoActu.getSelectionModel().clearSelection();
+        boxHoraActu.getSelectionModel().clearSelection();
+        pickerDiaActu.setValue(null);
+        labelHorarioActu.setText(" - ");
+
+        boxMedicoActu.setDisable(true);
+        boxHoraActu.setDisable(true);
+        pickerDiaActu.setDisable(true);
+        idBotonActualizarCita.setDisable(true);
+    }
+
+    private TableCell<Cita, String> crearCeldaCentrada() {
+        return new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item);
+                setAlignment(Pos.CENTER);
+            }
+        };
+    }
+
+    private List<LocalTime> generarHorasDisponibles(LocalTime inicio, LocalTime fin) {
+        List<LocalTime> horas = new ArrayList<>();
+        while (!inicio.isAfter(fin.minusMinutes(30))) {
+            horas.add(inicio);
+            inicio = inicio.plusMinutes(30);
+        }
+        return horas;
     }
 
 
     @FXML
     void asignarCita(ActionEvent event) {
+        Paciente paciente = boxPaciente.getValue();
+        Especialidad especialidad = boxEspecialidad.getValue();
+        Medico medico = boxMedico.getValue();
+        LocalTime hora = boxHoraCita.getValue();
+        LocalDate fecha = pickerDiaCita.getValue();
+
+        // Validación extra por seguridad
+        if (paciente == null || especialidad == null || medico == null || hora == null || fecha == null) {
+            AlertFactory.mostrarError("Debe completar todos los campos para asignar una cita ❌");
+            return;
+        }
+
+        // Verificar si ya hay cita asignada para ese médico, fecha y hora
+        boolean existe = citasDao.existeCita(medico.getId(), fecha, hora);
+        if (existe) {
+            AlertFactory.mostrarError("Este horario ya está ocupado para el médico seleccionado ❌");
+            return;
+        }
+
+        System.out.println("Médico seleccionado: " + medico.getNombre() + " " + medico.getApellido());
+        // Crear y guardar la cita
+        Cita nuevaCita = new Cita(
+                fecha,
+                hora,
+                medico,
+                paciente
+        );
+        System.out.println("Médico seleccionado: " + medico.getNombre() + " " + medico.getApellido());
+
+        citasDao.insertar(nuevaCita);
+        AlertFactory.mostrarInfo("Exito","Cita asignada correctamente ✔️");
+
+        // Resetear campos si deseas
+        boxPaciente.getSelectionModel().clearSelection();
+        boxEspecialidad.getSelectionModel().clearSelection();
+        boxMedico.getItems().clear();
+        boxMedico.setDisable(true);
+        boxHoraCita.getItems().clear();
+        boxHoraCita.setDisable(true);
+        pickerDiaCita.setValue(null);
+        pickerDiaCita.setDisable(true);
+        idBotonCita.setDisable(true);
+        labelHorario.setText(" - ");
+
+        citas.setAll(citasDao.obtenerTodos());
+        tablaCitas.setItems(citas);
+
+        cargarGraficoCitas();
+    }
+
+    @FXML
+    void eliminarCita(ActionEvent event) {
+        Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+
+        if (seleccionada == null) {
+            AlertFactory.mostrarError("Seleccione una cita para eliminar ❌");
+            return;
+        }
+
+        citasDao.eliminar(seleccionada);
+        citas.setAll(citasDao.obtenerTodos());
+        AlertFactory.mostrarInfo("Exito","Cita eliminada correctamente ✅");
+    }
+
+    @FXML
+    void actualizarCita(ActionEvent event) {
+
+        if (citaOriginal == null) {
+            AlertFactory.mostrarError("❌ Debe cargar una cita primero.");
+            return;
+        }
+
+        Especialidad nuevaEspecialidad = boxEspecialidadActu.getValue();
+        Medico nuevoMedico = boxMedicoActu.getValue();
+        LocalTime nuevaHora = boxHoraActu.getValue();
+        LocalDate nuevaFecha = pickerDiaActu.getValue();
+
+        if (nuevaEspecialidad == null || nuevoMedico == null || nuevaHora == null || nuevaFecha == null) {
+            AlertFactory.mostrarError("⚠️ Complete todos los campos antes de actualizar.");
+            return;
+        }
+
+        // Comparar si hubo cambios
+        boolean sinCambios = nuevaEspecialidad == citaOriginal.getMedico().getEspecialidad()
+                && nuevoMedico.getId().equals(citaOriginal.getMedico().getId())
+                && nuevaHora.equals(citaOriginal.getHora())
+                && nuevaFecha.equals(citaOriginal.getFecha());
+
+        if (sinCambios) {
+            AlertFactory.mostrarInfo("Sin cambios", "No se han detectado cambios en la cita.");
+            return;
+        }
+
+        // Validar si el nuevo horario está ocupado por otro
+        if (citasDao.existeCita(nuevoMedico.getId(), nuevaFecha, nuevaHora)) {
+            AlertFactory.mostrarError("❌ El médico ya tiene una cita en ese horario.");
+            return;
+        }
+
+        // Actualizar cita
+        citaOriginal.setMedico(nuevoMedico);
+        citaOriginal.setHora(nuevaHora);
+        citaOriginal.setFecha(nuevaFecha);
+
+        citasDao.actualizar(citaOriginal);
+        citas.setAll(citasDao.obtenerTodos());
+        tablaCitas.setItems(citas);
+
+        AlertFactory.mostrarInfo("✅ Actualizado", "La cita fue actualizada correctamente.");
+
+        // Limpiar campos
+        txtIdCita.clear();
+        txtPaciente.clear();
+        boxEspecialidadActu.getSelectionModel().clearSelection();
+        limpiarCamposActualizar();
+
+        // Desactivar botón actualizar
+        idBotonActualizarCita.setDisable(true);
+
+        // Reset citaOriginal
+        citaOriginal = null;
 
     }
 
+    private void buscarCitaPorId() {
+        try {
+            int idBuscado = Integer.parseInt(txtIdCita.getText().trim());
+
+            Optional<Cita> citaOpt = citasDao.obtenerTodos().stream()
+                    .filter(c -> c.getIdCita() == idBuscado)
+                    .findFirst();
+
+            if (citaOpt.isEmpty()) {
+                AlertFactory.mostrarError("❌ Cita no encontrada");
+                return;
+            }
+
+            Cita cita = citaOpt.get();
+            citaOriginal = cita;
+
+            // 1. Cargar especialidades y seleccionar la de la cita
+            boxEspecialidadActu.setItems(FXCollections.observableArrayList(Especialidad.values()));
+            boxEspecialidadActu.setValue(cita.getMedico().getEspecialidad());
+
+            // 2. Obtener todos los médicos y filtrar por especialidad
+            List<Medico> medicos = medDao.obtenerPorEspecialidad(cita.getMedico().getEspecialidad());
+            boxMedicoActu.setItems(FXCollections.observableArrayList(medicos));
+
+            // 3. Seleccionar el médico correcto por ID
+            for (Medico m : medicos) {
+                if (m.getId().equals(cita.getMedico().getId())) {
+                    boxMedicoActu.setValue(m);
+                    break;
+                }
+            }
+
+            // 4. Horario del médico
+            Medico medicoSeleccionado = boxMedicoActu.getValue();
+            if (medicoSeleccionado != null && medicoSeleccionado.getHorarioInicio() != null) {
+                labelHorarioActu.setText(medicoSeleccionado.getHorarioInicio() + " - " + medicoSeleccionado.getHorarioFin());
+            } else {
+                labelHorarioActu.setText("Horario no disponible");
+            }
+
+            // 5. Cargar hora, fecha y paciente
+            boxHoraActu.setValue(cita.getHora());
+            pickerDiaActu.setValue(cita.getFecha());
+            txtPaciente.setText(cita.getPaciente().getNombre() + " " + cita.getPaciente().getApellido());
+
+        } catch (NumberFormatException e) {
+            AlertFactory.mostrarError("⚠️ ID inválido");
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertFactory.mostrarError("Error al cargar la cita");
+        }
+    }
+
+    private void cargarGraficoCitas() {
+        graficoCitas.getData().clear();
+        Map<Especialidad, Long> conteo = citas.stream()
+                .collect(Collectors.groupingBy(c -> c.getMedico().getEspecialidad(), Collectors.counting()));
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Citas");
+
+        conteo.forEach((especialidad, cantidad) -> {
+            series.getData().add(new XYChart.Data<>(especialidad.name(), cantidad));
+        });
+
+        graficoCitas.getData().add(series);
+    }
+
+
+    @FXML
+    void exportarPDF(ActionEvent event) {
+
+    }
 }

@@ -6,6 +6,7 @@ import gomez.sistema.gestion.reservas.entities.Paciente;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
 import gomez.sistema.gestion.reservas.repository.CitaRepositorio;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,11 +23,11 @@ public class CitaController implements CitaRepositorio {
 
     @Override
     public Cita asignarCita(Paciente paciente, Medico medico) {
-        Date fecha = new Date();
+        LocalDate fecha = LocalDate.now();
         LocalTime hora = LocalTime.now();
 
         if(existeConflicto(fecha, medico, hora)) {
-            AlertFactory.mostrarError("Hay conflict de cita. No se puede asignar la cita. ✖️");
+            AlertFactory.mostrarError("Hay conflicto de cita. No se puede asignar la cita. ✖️");
         }
 
         Cita nuevaCita = new Cita(fecha, hora, medico, paciente);
@@ -36,6 +37,10 @@ public class CitaController implements CitaRepositorio {
 
     @Override
     public List<Cita> obtenerFechaCita(Date fecha) {
+        return List.of();
+    }
+
+    public List<Cita> obtenerFechaCita(LocalDate fecha) {
         return citas.stream()
                 .filter(c->c.getFecha().equals(fecha))
                 .collect(Collectors.toList());
@@ -57,6 +62,10 @@ public class CitaController implements CitaRepositorio {
 
     @Override
     public boolean existeConflicto(Date fecha, Medico medico, LocalTime hora) {
+        return false;
+    }
+
+    public boolean existeConflicto(LocalDate fecha, Medico medico, LocalTime hora) {
         return citas.stream()
                 .anyMatch((cita) -> cita.getFecha().equals(fecha)
                             && cita.getMedico().equals(medico)

@@ -4,10 +4,8 @@ import gomez.sistema.gestion.reservas.entities.Cita;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,10 +28,10 @@ public class CitasDao extends GenericDaoImpl<Cita> {
         try{
             String sql = "INSERT INTO gerardo_citas (fecha, hora, medico, paciente) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, String.valueOf(cita.getHora()));
-            ps.setString(2, String.valueOf(cita.getHora()));
-            ps.setString(3, String.valueOf(cita.getMedico()));
-            ps.setString(4, String.valueOf(cita.getPaciente()));
+            ps.setString(1, String.valueOf(java.sql.Date.valueOf(cita.getFecha())));
+            ps.setString(2, String.valueOf(Time.valueOf(cita.getHora())));
+            ps.setString(3, String.valueOf(cita.getMedico().getId()));
+            ps.setString(4, String.valueOf(cita.getPaciente().getCedula()));
             ps.executeUpdate();
         }catch (Exception e){
             e.printStackTrace();
@@ -42,16 +40,15 @@ public class CitasDao extends GenericDaoImpl<Cita> {
 
     @Override
     public void actualizar(Cita cita) {
-        try{
-            String sql = "UPDATE gerardo_citas SET fecha = ?, hora = ?, medico = ?, paciente = ? WHERE id = ?";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, String.valueOf(cita.getFecha()));
-            ps.setString(2, String.valueOf(cita.getHora()));
-            ps.setString(3, String.valueOf(cita.getMedico()));
-            ps.setString(4, String.valueOf(cita.getPaciente()));
+        String sql = "UPDATE gerardo_citas SET fecha = ?, hora = ?, medico = ?, paciente = ? WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setDate(1, java.sql.Date.valueOf(cita.getFecha()));
+            ps.setTime(2, java.sql.Time.valueOf(cita.getHora()));
+            ps.setInt(3, cita.getMedico().getId());     // ✅ ID del médico
+            ps.setInt(4, Integer.parseInt(cita.getPaciente().getCedula()));   // ✅ ID del paciente
             ps.setInt(5, cita.getIdCita());
             ps.executeUpdate();
-        }catch (Exception e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -98,7 +95,7 @@ public class CitasDao extends GenericDaoImpl<Cita> {
             ResultSet rs = st.executeQuery(sql);
             while(rs.next()){
                 int idCita = rs.getInt("id");
-                Date fecha = rs.getDate("fecha");
+                LocalDate fecha = rs.getDate("fecha").toLocalDate();
                 LocalTime hora = rs.getTime("hora").toLocalTime();
                 int idMedico = rs.getInt("medico");
                 int idPaciente = rs.getInt("paciente");
@@ -114,5 +111,22 @@ public class CitasDao extends GenericDaoImpl<Cita> {
         }
 
         return citas;
+    }
+
+    public boolean existeCita(int idMedico, LocalDate fecha, LocalTime hora) {
+        try {
+            String sql = "SELECT COUNT(*) FROM gerardo_citas WHERE medico = ? AND fecha = ? AND hora = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, idMedico);
+            ps.setDate(2, java.sql.Date.valueOf(fecha));
+            ps.setTime(3, java.sql.Time.valueOf(hora));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
