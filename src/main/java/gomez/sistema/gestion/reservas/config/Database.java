@@ -1,4 +1,4 @@
-package gomez.sistema.gestion.reservas.sql;
+package gomez.sistema.gestion.reservas.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 

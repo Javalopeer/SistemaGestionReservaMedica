@@ -5,7 +5,7 @@ import gomez.sistema.gestion.reservas.entities.Especialidad;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
 import gomez.sistema.gestion.reservas.pdf.PdfExporterMed;
-import gomez.sistema.gestion.reservas.sql.Database;
+import gomez.sistema.gestion.reservas.config.Database;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;

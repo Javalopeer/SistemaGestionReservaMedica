@@ -3,7 +3,7 @@ package gomez.sistema.gestion.reservas.views;
 import gomez.sistema.gestion.reservas.dao.CitasDao;
 import gomez.sistema.gestion.reservas.dao.MedicoDao;
 import gomez.sistema.gestion.reservas.dao.PacienteDao;
-import gomez.sistema.gestion.reservas.sql.Database;
+import gomez.sistema.gestion.reservas.config.Database;
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

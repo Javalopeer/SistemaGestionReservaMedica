@@ -6,7 +6,7 @@ import gomez.sistema.gestion.reservas.dao.PacienteDao;
 import gomez.sistema.gestion.reservas.entities.Cita;
 import gomez.sistema.gestion.reservas.entities.Medico;
 import gomez.sistema.gestion.reservas.entities.Paciente;
-import gomez.sistema.gestion.reservas.sql.Database;
+import gomez.sistema.gestion.reservas.config.Database;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;

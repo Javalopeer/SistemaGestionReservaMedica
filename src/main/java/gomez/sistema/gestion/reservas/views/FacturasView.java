@@ -7,7 +7,7 @@ import gomez.sistema.gestion.reservas.dao.PacienteDao;
 import gomez.sistema.gestion.reservas.entities.Factura;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
 import gomez.sistema.gestion.reservas.pdf.PdfExporterFactura;
-import gomez.sistema.gestion.reservas.sql.Database;
+import gomez.sistema.gestion.reservas.config.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

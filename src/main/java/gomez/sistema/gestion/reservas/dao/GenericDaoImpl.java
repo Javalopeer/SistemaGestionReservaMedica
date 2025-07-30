@@ -1,7 +1,6 @@
 package gomez.sistema.gestion.reservas.dao;
 
 import gomez.sistema.gestion.reservas.repository.GenericDao;
-import gomez.sistema.gestion.reservas.sql.Database;
 
 import java.sql.Connection;
 import java.util.List;
