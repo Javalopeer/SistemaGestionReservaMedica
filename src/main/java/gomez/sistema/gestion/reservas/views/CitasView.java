@@ -1,14 +1,9 @@
 package gomez.sistema.gestion.reservas.views;
 
-import gomez.sistema.gestion.reservas.dao.CitasDao;
-import gomez.sistema.gestion.reservas.dao.Database;
-import gomez.sistema.gestion.reservas.dao.MedicoDao;
-import gomez.sistema.gestion.reservas.dao.PacienteDao;
-import gomez.sistema.gestion.reservas.entities.Cita;
-import gomez.sistema.gestion.reservas.entities.Especialidad;
-import gomez.sistema.gestion.reservas.entities.Medico;
-import gomez.sistema.gestion.reservas.entities.Paciente;
+import gomez.sistema.gestion.reservas.dao.*;
+import gomez.sistema.gestion.reservas.entities.*;
 import gomez.sistema.gestion.reservas.error.AlertFactory;
+import gomez.sistema.gestion.reservas.pdf.PdfExporterCita;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,9 +11,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.time.LocalDate;
@@ -34,6 +32,7 @@ public class CitasView {
     private final MedicoDao medDao = new MedicoDao(Database.getConnection());
     private final PacienteDao pacDao = new PacienteDao(Database.getConnection());
     private final CitasDao citasDao = new CitasDao(Database.getConnection(), pacDao, medDao);
+    private final FacturaDao facturaDao = new FacturaDao(Database.getConnection(), citasDao);
     private ObservableList<Cita> citas = FXCollections.observableArrayList();
     private Cita citaOriginal;
 
@@ -102,6 +101,13 @@ public class CitasView {
 
     @FXML
     private BarChart<String, Number> graficoCitas;
+
+    @FXML
+    private CategoryAxis ejeX;
+
+    @FXML
+    private NumberAxis ejeY;
+
 
     @FXML
     private Button btnExportarPDF;
@@ -270,6 +276,8 @@ public class CitasView {
             }
         });
 
+        cargarGrafico();
+
 
     }
 
@@ -314,33 +322,34 @@ public class CitasView {
         LocalTime hora = boxHoraCita.getValue();
         LocalDate fecha = pickerDiaCita.getValue();
 
-        // Validación extra por seguridad
         if (paciente == null || especialidad == null || medico == null || hora == null || fecha == null) {
             AlertFactory.mostrarError("Debe completar todos los campos para asignar una cita ❌");
             return;
         }
 
-        // Verificar si ya hay cita asignada para ese médico, fecha y hora
         boolean existe = citasDao.existeCita(medico.getId(), fecha, hora);
         if (existe) {
             AlertFactory.mostrarError("Este horario ya está ocupado para el médico seleccionado ❌");
             return;
         }
 
-        System.out.println("Médico seleccionado: " + medico.getNombre() + " " + medico.getApellido());
-        // Crear y guardar la cita
-        Cita nuevaCita = new Cita(
-                fecha,
-                hora,
-                medico,
-                paciente
-        );
-        System.out.println("Médico seleccionado: " + medico.getNombre() + " " + medico.getApellido());
+        Cita nuevaCita = new Cita(fecha, hora, medico, paciente);
 
-        citasDao.insertar(nuevaCita);
-        AlertFactory.mostrarInfo("Exito","Cita asignada correctamente ✔️");
+        int idGenerado = citasDao.insertarCita(nuevaCita);
+        if (idGenerado <= 0) {
+            AlertFactory.mostrarError("No se pudo guardar la cita ❌");
+            return;
+        }
+        nuevaCita.setIdCita(idGenerado);
 
-        // Resetear campos si deseas
+        double monto = EspecialidadConMonto.obtenerMontoPorNombre(medico.getEspecialidad().name());
+        Factura nuevaFactura = new Factura(nuevaCita, new java.sql.Date(System.currentTimeMillis()), monto);
+
+        FacturaDao facturaDao = new FacturaDao(Database.getConnection(), citasDao);
+        facturaDao.insertar(nuevaFactura);
+
+        AlertFactory.mostrarInfo("Éxito", "Cita y factura asignadas correctamente ✔️");
+
         boxPaciente.getSelectionModel().clearSelection();
         boxEspecialidad.getSelectionModel().clearSelection();
         boxMedico.getItems().clear();
@@ -354,22 +363,32 @@ public class CitasView {
 
         citas.setAll(citasDao.obtenerTodos());
         tablaCitas.setItems(citas);
+        cargarGrafico();
 
-        cargarGraficoCitas();
     }
 
     @FXML
     void eliminarCita(ActionEvent event) {
-        Cita seleccionada = tablaCitas.getSelectionModel().getSelectedItem();
+        Cita citaSeleccionada = tablaCitas.getSelectionModel().getSelectedItem();
 
-        if (seleccionada == null) {
-            AlertFactory.mostrarError("Seleccione una cita para eliminar ❌");
+        if (citaSeleccionada == null) {
+            AlertFactory.mostrarError("Debe seleccionar una cita para eliminar ❌");
             return;
         }
 
-        citasDao.eliminar(seleccionada);
+        int idCita = citaSeleccionada.getIdCita();
+
+        if (facturaDao.existeFacturaParaCita(idCita)) {
+            AlertFactory.mostrarError("Primero debe eliminar la factura asociada a esta cita ❌");
+            return;
+        }
+
+        citasDao.eliminar(idCita);
+        AlertFactory.mostrarInfo("Éxito", "Cita eliminada correctamente ✔️");
+
         citas.setAll(citasDao.obtenerTodos());
-        AlertFactory.mostrarInfo("Exito","Cita eliminada correctamente ✅");
+        tablaCitas.setItems(citas);
+        cargarGrafico();
     }
 
     @FXML
@@ -415,6 +434,7 @@ public class CitasView {
         citasDao.actualizar(citaOriginal);
         citas.setAll(citasDao.obtenerTodos());
         tablaCitas.setItems(citas);
+        cargarGrafico();
 
         AlertFactory.mostrarInfo("✅ Actualizado", "La cita fue actualizada correctamente.");
 
@@ -429,7 +449,6 @@ public class CitasView {
 
         // Reset citaOriginal
         citaOriginal = null;
-
     }
 
     private void buscarCitaPorId() {
@@ -485,17 +504,21 @@ public class CitasView {
         }
     }
 
-    private void cargarGraficoCitas() {
-        graficoCitas.getData().clear();
-        Map<Especialidad, Long> conteo = citas.stream()
-                .collect(Collectors.groupingBy(c -> c.getMedico().getEspecialidad(), Collectors.counting()));
+    private void cargarGrafico() {
+        graficoCitas.getData().clear(); // Limpiar datos anteriores
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Citas");
+        series.setName("Citas por Especialidad");
 
-        conteo.forEach((especialidad, cantidad) -> {
-            series.getData().add(new XYChart.Data<>(especialidad.name(), cantidad));
-        });
+        Map<Especialidad, Long> conteo = citas.stream()
+                .collect(Collectors.groupingBy(
+                        c -> c.getMedico().getEspecialidad(),
+                        Collectors.counting()
+                ));
+
+        for (Map.Entry<Especialidad, Long> entry : conteo.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getKey().name(), entry.getValue()));
+        }
 
         graficoCitas.getData().add(series);
     }
@@ -503,6 +526,6 @@ public class CitasView {
 
     @FXML
     void exportarPDF(ActionEvent event) {
-
+        PdfExporterCita.exportarCitas(citas, (Stage) tablaCitas.getScene().getWindow());
     }
 }

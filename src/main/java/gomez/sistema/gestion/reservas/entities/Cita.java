@@ -29,4 +29,13 @@ public class Cita {
         this.paciente = paciente;
     }
 
+//    @Override
+//    public String toString() {
+//        return "Factura #" + idFactura +
+//                " - Paciente: " + cita.getPaciente().getNombre() +
+//                ", Médico: " + cita.getMedico().getNombre() +
+//                ", Monto: ₡" + monto +
+//                ", Fecha: " + fechaEmision;
+//    }
+
 }

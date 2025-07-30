@@ -23,19 +23,27 @@ public class CitasDao extends GenericDaoImpl<Cita> {
     }
 
 
-    @Override
-    public void insertar(Cita cita) {
-        try{
-            String sql = "INSERT INTO gerardo_citas (fecha, hora, medico, paciente) VALUES (?, ?, ?, ?)";
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setString(1, String.valueOf(java.sql.Date.valueOf(cita.getFecha())));
-            ps.setString(2, String.valueOf(Time.valueOf(cita.getHora())));
-            ps.setString(3, String.valueOf(cita.getMedico().getId()));
-            ps.setString(4, String.valueOf(cita.getPaciente().getCedula()));
+
+    public int insertarCita(Cita cita) {
+        int idGenerado = -1;
+        String sql = "INSERT INTO gerardo_citas (fecha, hora, medico, paciente) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setDate(1, java.sql.Date.valueOf(cita.getFecha()));
+            ps.setTime(2, java.sql.Time.valueOf(cita.getHora()));
+            ps.setInt(3, cita.getMedico().getId());
+            ps.setInt(4, Integer.parseInt(cita.getPaciente().getCedula()));
+
             ps.executeUpdate();
-        }catch (Exception e){
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                idGenerado = rs.getInt(1);
+                cita.setIdCita(idGenerado); // Asignar el ID a la cita
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return idGenerado;
     }
 
     @Override
@@ -53,10 +61,10 @@ public class CitasDao extends GenericDaoImpl<Cita> {
         }
     }
 
-    public void eliminar(Cita cita) {
+    public void eliminar(int idCita) {
         String sql = "DELETE FROM gerardo_citas WHERE id = ?";
         try(PreparedStatement ps = connection.prepareStatement(sql)){
-            ps.setInt(1, cita.getIdCita());
+            ps.setInt(1, idCita);
             ps.executeUpdate();
         }catch (Exception e){
             e.printStackTrace();

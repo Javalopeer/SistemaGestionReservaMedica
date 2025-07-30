@@ -25,11 +25,6 @@ public class InicioView {
     @FXML
     private BorderPane mainPane;
 
-    @FXML
-    void mostrarFacturas(ActionEvent event) {
-
-    }
-
 
     @FXML
     void mostrarHistorial(ActionEvent event) {
@@ -95,6 +90,9 @@ public class InicioView {
     void mostrarCitas(ActionEvent event) {
         mostrarVistaConLoader("/Cita.fxml");
     }
+
+    @FXML
+    void mostrarFacturas(ActionEvent event) {mostrarVistaConLoader("/Factura.fxml"); }
 
 
     @FXML
