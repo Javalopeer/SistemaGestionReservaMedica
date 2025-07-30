@@ -11,58 +11,58 @@
 <?import javafx.scene.effect.Bloom?>
 <?import javafx.scene.chart.PieChart?>
 <VBox xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="gomez.sistema.gestion.reservas.views.ContenidoView"
-            prefHeight="200.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-            </padding>
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="gomez.sistema.gestion.reservas.views.ContenidoView"
+      prefHeight="200.0" prefWidth="100.0" spacing="20.0" BorderPane.alignment="CENTER">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <children>
+        <Label alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="133.0" prefWidth="580.0" text="Bienvenido al Sistema de Gestión de Reservas Médicas" textAlignment="CENTER" textOverrun="WORD_ELLIPSIS" wrapText="true">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+            <cursor>
+                <Cursor fx:constant="NONE" />
+            </cursor>
+            <effect>
+                <Bloom />
+            </effect>
+        </Label>
+        <HBox alignment="CENTER" prefHeight="182.0" prefWidth="460.0" spacing="20.0">
             <children>
-                <Label alignment="TOP_CENTER" contentDisplay="CENTER" prefHeight="133.0" prefWidth="580.0" text="Bienvenido al Sistema de Gestión de Reservas Médicas" textAlignment="CENTER" textOverrun="WORD_ELLIPSIS" wrapText="true">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                    <cursor>
-                        <Cursor fx:constant="NONE" />
-                    </cursor>
-                    <effect>
-                        <Bloom />
-                    </effect>
-                </Label>
-                <HBox alignment="CENTER" prefHeight="182.0" prefWidth="460.0" spacing="20.0">
+                <VBox prefHeight="119.0" prefWidth="100.0">
                     <children>
-                        <VBox prefHeight="119.0" prefWidth="100.0">
-                            <children>
-                                <Label fx:id="cantidadMedicos" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                                    <font>
-                                        <Font name="System Bold" size="20.0" />
-                                    </font>
-                                </Label>
-                                <Label alignment="BASELINE_CENTER" prefHeight="75.0" prefWidth="100.0" text="Total de médicos registrados" textAlignment="CENTER" wrapText="true" />
-                            </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                            <children>
-                                <Label fx:id="cantidadPacientes" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                                    <font>
-                                        <Font name="System Bold" size="20.0" />
-                                    </font>
-                                </Label>
-                                <Label alignment="BASELINE_CENTER" prefHeight="70.0" prefWidth="100.0" text="Total de pacientes registrados" textAlignment="CENTER" wrapText="true" />
-                            </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
-                            <children>
-                                <Label fx:id="cantidadCitas" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
-                                    <font>
-                                        <Font name="System Bold" size="20.0" />
-                                    </font>
-                                </Label>
-                                <Label alignment="BASELINE_CENTER" prefHeight="83.0" prefWidth="100.0" text="Total de citas registradas" textAlignment="CENTER" wrapText="true" />
-                            </children>
-                        </VBox>
+                        <Label fx:id="cantidadMedicos" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
+                            <font>
+                                <Font name="System Bold" size="20.0" />
+                            </font>
+                        </Label>
+                        <Label alignment="BASELINE_CENTER" prefHeight="75.0" prefWidth="100.0" text="Total de médicos registrados" textAlignment="CENTER" wrapText="true" />
                     </children>
-                </HBox>
-                <PieChart fx:id="pieChartCitas" prefHeight="332.0" prefWidth="580.0" />
+                </VBox>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label fx:id="cantidadPacientes" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
+                            <font>
+                                <Font name="System Bold" size="20.0" />
+                            </font>
+                        </Label>
+                        <Label alignment="BASELINE_CENTER" prefHeight="70.0" prefWidth="100.0" text="Total de pacientes registrados" textAlignment="CENTER" wrapText="true" />
+                    </children>
+                </VBox>
+                <VBox prefHeight="200.0" prefWidth="100.0">
+                    <children>
+                        <Label fx:id="cantidadCitas" alignment="CENTER" contentDisplay="CENTER" prefHeight="30.0" prefWidth="104.0" text="Label" textAlignment="CENTER">
+                            <font>
+                                <Font name="System Bold" size="20.0" />
+                            </font>
+                        </Label>
+                        <Label alignment="BASELINE_CENTER" prefHeight="83.0" prefWidth="100.0" text="Total de citas registradas" textAlignment="CENTER" wrapText="true" />
+                    </children>
+                </VBox>
             </children>
-        </VBox>
+        </HBox>
+        <PieChart fx:id="pieChartCitas" prefHeight="332.0" prefWidth="580.0" />
+    </children>
+</VBox>

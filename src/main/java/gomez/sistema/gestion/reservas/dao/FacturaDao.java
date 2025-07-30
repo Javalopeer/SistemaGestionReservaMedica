@@ -20,12 +20,12 @@ public class FacturaDao extends GenericDaoImpl<Factura> {
     public void insertar(Factura factura) {
         String sql = "INSERT INTO gerardo_factura (idCita, fechaEmision, monto) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, factura.getCita().getIdCita()); // Asegúrate que Cita tiene getId()
+            stmt.setInt(1, factura.getCita().getIdCita());
             stmt.setDate(2, factura.getFechaEmision());
             stmt.setDouble(3, factura.getMonto());
             stmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace(); // Mejor usar un logger
+            e.printStackTrace();
         }
     }
 

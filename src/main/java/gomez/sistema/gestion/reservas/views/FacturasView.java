@@ -13,13 +13,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class FacturasView {
 
@@ -29,23 +34,25 @@ public class FacturasView {
     private final FacturaDao facturas = new FacturaDao(gomez.sistema.gestion.reservas.dao.Database.getConnection(), citasDao);
     private ObservableList<Factura> facturasLista = FXCollections.observableArrayList();
 
-    @FXML
-    private TableView<Factura> tablaFacturas;
-
+    @FXML private TableView<Factura> tablaFacturas;
     @FXML private TableColumn<Factura, Integer> colId;
-
     @FXML private TableColumn<Factura, String> colPaciente, colMedico, colEspecialidad;
-
     @FXML private TableColumn<Factura, Double> colMonto;
-
     @FXML private TableColumn<Factura, java.sql.Date> colFecha;
+    @FXML private Label lblTotalFacturas;
+    @FXML private Label lblMontoTotal;
+    @FXML private ComboBox<String> cmbFiltroPaciente;
+    @FXML private DatePicker dateFiltro;
+    @FXML private BarChart<String, Number> graficoComparativo;
+    @FXML private CategoryAxis ejeXComparativo;
+    @FXML private NumberAxis ejeYComparativo;
+
 
     private FacturaDao facturaDao;
 
 
     @FXML
     public void initialize() {
-
         try (Connection con = Database.getConnection()) {
             if (con != null) {
                 System.out.println("Conectado exitosamente a la base de datos de Reservas Medicas. ✅");
@@ -53,7 +60,6 @@ public class FacturasView {
         } catch (SQLException e) {
             System.out.println("✖️ Error al conectar: " + e.getMessage());
         }
-
         PacienteDao pacienteDao = new PacienteDao(Database.getConnection());
         MedicoDao medicoDao = new MedicoDao(Database.getConnection());
         CitasDao citasDao = new CitasDao(Database.getConnection(), pacienteDao, medicoDao);
@@ -68,6 +74,7 @@ public class FacturasView {
 
         configurarColumnas();
         cargarFacturas();
+        cargarGraficoComparativo();
     }
 
     private TableCell<Factura, String> crearCeldaCentrada() {
@@ -80,7 +87,6 @@ public class FacturasView {
             }
         };
     }
-
     private TableCell<Factura, Double> crearCeldaCentradaDouble() {
         return new TableCell<>() {
             @Override
@@ -91,7 +97,6 @@ public class FacturasView {
             }
         };
     }
-
     private TableCell<Factura, Integer> crearCeldaCentradaInteger() {
         return new TableCell<>() {
             @Override
@@ -102,7 +107,6 @@ public class FacturasView {
             }
         };
     }
-
     private TableCell<Factura, java.sql.Date> crearCeldaCentradaDate() {
         return new TableCell<>() {
             @Override
@@ -113,7 +117,6 @@ public class FacturasView {
             }
         };
     }
-
     private void configurarColumnas() {
         colId.setCellValueFactory(f -> new javafx.beans.property.SimpleIntegerProperty(f.getValue().getIdFactura()).asObject());
         colPaciente.setCellValueFactory(f -> new javafx.beans.property.SimpleStringProperty(f.getValue().getCita().getPaciente().getNombre()));
@@ -123,9 +126,71 @@ public class FacturasView {
         colFecha.setCellValueFactory(f -> new javafx.beans.property.SimpleObjectProperty<>(f.getValue().getFechaEmision()));
     }
 
+    @FXML
     private void cargarFacturas() {
-        facturasLista.setAll(facturaDao.obtenerTodos());
+        // Limpiar controles visuales
+        cmbFiltroPaciente.getSelectionModel().clearSelection();
+        dateFiltro.setValue(null);
+
+        // Volver a cargar todas las facturas
+        List<Factura> lista = facturaDao.obtenerTodos();
+        facturasLista.setAll(lista);
         tablaFacturas.setItems(facturasLista);
+
+        // Volver a poblar el ComboBox
+        cmbFiltroPaciente.setItems(FXCollections.observableArrayList(
+                lista.stream()
+                        .map(f -> f.getCita().getPaciente().getNombre())
+                        .distinct()
+                        .sorted()
+                        .toList()
+        ));
+
+        actualizarResumen();
+    }
+
+    private void actualizarResumen() {
+        int total = facturasLista.size();
+        double monto = facturasLista.stream().mapToDouble(Factura::getMonto).sum();
+        lblTotalFacturas.setText("Total: " + total);
+        lblMontoTotal.setText(String.format("Monto Total: ₡%,.2f", monto));
+    }
+
+    private void cargarGraficoComparativo() {
+        // Serie 1: por médico
+        Map<String, Long> porMedico = facturasLista.stream()
+                .collect(Collectors.groupingBy(f -> f.getCita().getMedico().getNombre(), Collectors.counting()));
+
+        XYChart.Series<String, Number> serieMedicos = new XYChart.Series<>();
+        serieMedicos.setName("Por Médico");
+        porMedico.forEach((medico, cantidad) -> serieMedicos.getData().add(new XYChart.Data<>(medico, cantidad)));
+
+        // Serie 2: por especialidad
+        Map<String, Long> porEspecialidad = facturasLista.stream()
+                .collect(Collectors.groupingBy(f -> f.getCita().getMedico().getEspecialidad().name(), Collectors.counting()));
+
+        XYChart.Series<String, Number> serieEspecialidades = new XYChart.Series<>();
+        serieEspecialidades.setName("Por Especialidad");
+        porEspecialidad.forEach((esp, cantidad) -> serieEspecialidades.getData().add(new XYChart.Data<>(esp, cantidad)));
+
+        // Mostrar ambas
+        graficoComparativo.getData().clear();
+        graficoComparativo.getData().addAll(serieMedicos, serieEspecialidades);
+    }
+
+    @FXML
+    private void filtrarFacturas() {
+        String paciente = cmbFiltroPaciente.getValue();
+        LocalDate fecha = dateFiltro.getValue();
+
+        List<Factura> lista = facturaDao.obtenerTodos().stream()
+                .filter(f -> (paciente == null || f.getCita().getPaciente().getNombre().equals(paciente)))
+                .filter(f -> (fecha == null || f.getFechaEmision().toLocalDate().equals(fecha)))
+                .toList();
+
+        facturasLista.setAll(lista);
+        tablaFacturas.setItems(facturasLista);
+        actualizarResumen();
     }
 
     @FXML

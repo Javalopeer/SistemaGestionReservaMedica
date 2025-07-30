@@ -21,7 +21,12 @@ public class PacienteController implements PacienteRepositorio {
     }
 
     @Override
-    public Paciente buscar(Float cedula) {
+    public Paciente buscar(Float t) {
+        return null;
+    }
+
+
+    public Paciente buscarName(String cedula) {
         return pacientes.stream()
                 .filter(p-> p.getCedula().equals(cedula))
                 .findFirst()
@@ -35,7 +40,7 @@ public class PacienteController implements PacienteRepositorio {
 
     @Override
     public void actualizar(Paciente paciente) {
-        Paciente p = buscar(Float.valueOf(paciente.getCedula()));
+        Paciente p = buscarName(paciente.getCedula());
         if (p != null) {
             p.setNombre(paciente.getNombre());
             p.setApellido(paciente.getApellido());
